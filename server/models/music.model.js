@@ -1,0 +1,48 @@
+// music.model.js
+
+import mongoose from 'mongoose';
+
+const MusicSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true,
+  },
+  artist: {
+    type: String,
+    required: true,
+  },
+  album: {
+    type: String,
+  },
+  genre: {
+    type: String,
+  },
+  coverImg: {
+    public_id: {
+        type: String,
+    },
+    url: {
+        type: String,
+    }
+  },
+  audio: {
+    public_id: {
+        type: String,
+        required: true,
+    },
+    url: {
+        type: String,
+        required: true,
+    }
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
+}, {
+    timestamps: true,
+});
+
+const Music = mongoose.model('Music', MusicSchema);
+
+export default Music;
