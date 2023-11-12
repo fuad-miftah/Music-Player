@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../reducers/rootReducer';
+import { fetchDataStart } from '../reducers/musicSlice';
 import Card from '../components/card';
 import styled from '@emotion/styled';
-import musicData from '../constant/musicData';
-
 
 const MusicContainer = styled.div`
   display: flex;
@@ -48,7 +49,6 @@ const SearchButton = styled.button`
 const CardsContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-//   justify-content: space-around;
   margin-top: 20px;
   gap: 20px;
   width: 100%; /* Ensure full width */
@@ -73,13 +73,25 @@ const PageNumberContainer = styled.div`
 `;
 
 const MusicPage: React.FC = () => {
+  const dispatch = useDispatch();
+  const { data, loading, error } = useSelector((state: RootState) => state.music);
+
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState(musicData);
+  const [searchResults, setSearchResults] = useState(data?.musicList || []);
 
   // Calculate total pages whenever search results change
   const totalPages = Math.ceil(searchResults.length / itemsPerPage);
+
+  useEffect(() => {
+    if (!data) {
+      // Fetch data when component mounts
+      dispatch(fetchDataStart());
+    } else {
+      setSearchResults(data.musicList);
+    }
+  }, [dispatch, data]);
 
   useEffect(() => {
     setCurrentPage(1); // Reset to the first page when search results change
@@ -90,14 +102,16 @@ const MusicPage: React.FC = () => {
   };
 
   const handleSearch = () => {
-    // Filter music based on the search term
-    const filteredResults = musicData.filter(
-      (item) =>
-        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.artist.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    if (data) {
+      // Filter music based on the search term
+      const filteredResults = data.musicList.filter(
+        (item) =>
+          item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.artist.toLowerCase().includes(searchTerm.toLowerCase())
+      );
 
-    setSearchResults(filteredResults);
+      setSearchResults(filteredResults);
+    }
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -105,6 +119,14 @@ const MusicPage: React.FC = () => {
       handleSearch();
     }
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <MusicContainer>
@@ -127,9 +149,9 @@ const MusicPage: React.FC = () => {
             currentPage * itemsPerPage
           ).map((item) => (
             <Card
-              key={item.id}
-              id={String(item.id)}
-              imageUrl={item.imageUrl}
+              key={item._id}
+              id={String(item._id)}
+              imageUrl={item.coverImg.url} // Adjust property name
               title={item.title}
               artist={item.artist}
             />

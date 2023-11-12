@@ -7,7 +7,8 @@ import {
     deleteMusic, 
     getMusic, 
     getAllMusic, 
-    getClientMusic 
+    getClientMusic,
+    getAllMusicWithStats
 } from '../controllers/music.controller.js';
 
 import { verifyClient } from "../utils/verifyToken.js";
@@ -31,5 +32,8 @@ router.get('/all', getAllMusic);
 
 // Get Music for a specific User
 router.get('/user/:userId', getClientMusic);
+
+// Get All Music with stats
+router.get('/allwithstat', getAllMusicWithStats);
 
 export default router;

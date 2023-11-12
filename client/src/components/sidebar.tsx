@@ -64,6 +64,16 @@ const Sidebar = () => (
       <SidebarItem Icon={FaRegFileAlt} Text="Reports" to="/reports" />
       <SidebarItem Icon={FaRegSun} Text="Settings" to="/settings" />
     </Content>
+    
+    {/* Login Section */}
+    <div style={{ position: 'absolute', bottom: 20, left: 10 }}>
+      <img
+        src="https://res.cloudinary.com/dvzhoifgr/image/upload/v1699652474/images/ueluum4lwtk7txqw9cew.png" // Replace with the path to the user's avatar image
+        alt="User Avatar"
+        style={{ width: '40px', height: '40px', borderRadius: '50%', marginRight: '10px' }}
+      />
+      <span style={{ color: 'white', fontSize: '14px' }}>John Doe</span> {/* Replace with the user's name */}
+    </div>
   </SidebarContainer>
 );
 

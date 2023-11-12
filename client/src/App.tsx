@@ -3,10 +3,10 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/sidebar';
 import MusicPage from './pages/Music';
 import MusicDetailPage from './pages/MusicDetailPage';
-import Statistics from './components/statistics';
 import Home from './pages/Home';
 import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
+import Statistics from './pages/Statistics';
 
 const globalStyles = css`
   /* Add your global styles here */
