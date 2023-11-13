@@ -7,6 +7,8 @@ import Home from './pages/Home';
 import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import Statistics from './pages/Statistics';
+import LoginPage from './pages/Login';
+import NewMusic from './pages/NewMusic';
 
 const globalStyles = css`
   /* Add your global styles here */
@@ -42,6 +44,10 @@ const App: React.FC = () => {
             <Route path="/statistics" element={<Statistics />} />
             <Route path='/music' element={<MusicPage />} />
             <Route path="/music/:id" element={<MusicDetailPage />} />
+            <Route path="/mymusic/:id" element={<MusicDetailPage />} />
+            <Route path="/mystat/:id" element={<MusicDetailPage />} />
+            <Route path="/newmusic/:id" element={<NewMusic />} />
+            <Route path="/login" element={<LoginPage />} />
           </Routes>
         </MainContent>
       </RootContainer>

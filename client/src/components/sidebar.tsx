@@ -1,25 +1,41 @@
+// Sidebar.tsx
+
 import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { FaHome, FaEnvelope, FaRegSun, FaUserAlt, FaIdCardAlt, FaRegFileAlt, FaRegCalendarAlt, FaChartBar, FaMusic } from 'react-icons/fa';
+import { useDispatch } from 'react-redux';
+import { FaHome, FaChartBar, FaMusic } from 'react-icons/fa';
+import { MdFiberNew} from 'react-icons/md';
 import styled from '@emotion/styled';
+import { NavLink } from 'react-router-dom';
+import { logout } from '../reducers/authSlice';
+
 
 const SidebarContainer = styled.div`
-  background-color: black;
+  background-color: #1a1a1a;
   position: fixed;
   height: 100%;
   top: 0;
   left: 0;
   width: 200px;
+  display: flex;
+  flex-direction: column;
 `;
 
 const Content = styled.div`
   margin-top: 60px;
 `;
 
+const UserContainer = styled.div`
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: auto; /* Push to the bottom */
+`;
+
 const SidebarItemContainer = styled(NavLink)`
   display: flex;
   align-items: center;
-  background-color: #1A202C;
+  background-color: #232323;
   font-size: 16px;
   color: white;
   padding: 10px;
@@ -32,17 +48,23 @@ const SidebarItemContainer = styled(NavLink)`
     margin-right: 10px;
   }
 
-  text-decoration: none; /* Remove underline */
-  color: white; /* Default link color */
+  text-decoration: none;
+  color: white;
 
   &:hover {
-    background-color: #2C3846;
+    background-color: #303030;
   }
 
   &.active {
-    background-color: #1E1E1E; /* Change the active link background color */
-    color: white; /* Change the active link text color */
+    background-color: #333333;
+    color: white;
   }
+`;
+
+const UserName = styled.span`
+  color: white;
+  font-size: 14px;
+  margin-bottom: 5px;
 `;
 
 const SidebarItem = ({ Icon, Text, to }: { Icon: React.ElementType; Text: string; to: string }) => (
@@ -52,29 +74,42 @@ const SidebarItem = ({ Icon, Text, to }: { Icon: React.ElementType; Text: string
   </SidebarItemContainer>
 );
 
-const Sidebar = () => (
-  <SidebarContainer>
-    <Content>
-      <SidebarItem Icon={FaHome} Text="Home" to="/" />
-      <SidebarItem Icon={FaChartBar} Text="Statistics" to="/statistics" />
-      <SidebarItem Icon={FaUserAlt} Text="Users" to="/users" />
-      <SidebarItem Icon={FaMusic} Text="Music" to="/music" />
-      <SidebarItem Icon={FaRegCalendarAlt} Text="Calendar" to="/calendar" />
-      <SidebarItem Icon={FaIdCardAlt} Text="Employees" to="/employees" />
-      <SidebarItem Icon={FaRegFileAlt} Text="Reports" to="/reports" />
-      <SidebarItem Icon={FaRegSun} Text="Settings" to="/settings" />
-    </Content>
-    
-    {/* Login Section */}
-    <div style={{ position: 'absolute', bottom: 20, left: 10 }}>
-      <img
-        src="https://res.cloudinary.com/dvzhoifgr/image/upload/v1699652474/images/ueluum4lwtk7txqw9cew.png" // Replace with the path to the user's avatar image
-        alt="User Avatar"
-        style={{ width: '40px', height: '40px', borderRadius: '50%', marginRight: '10px' }}
-      />
-      <span style={{ color: 'white', fontSize: '14px' }}>John Doe</span> {/* Replace with the user's name */}
-    </div>
-  </SidebarContainer>
-);
+const Sidebar = () => {
+  const dispatch = useDispatch();
+  const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
+  const userName = storedUser?.username || '';
+
+  const handleLogout = () => {
+    dispatch(logout());
+  };
+
+  return (
+    <SidebarContainer>
+      <Content>
+        <SidebarItem Icon={FaHome} Text="Home" to="/" />
+        <SidebarItem Icon={FaChartBar} Text="Statistics" to="/statistics" />
+        <SidebarItem Icon={FaMusic} Text="Music" to="/music" />
+        {storedUser && <SidebarItem Icon={FaChartBar} Text="My Stat" to={`/mystat/${storedUser?._id}`} />}
+        {storedUser && <SidebarItem Icon={FaMusic} Text="My Music" to={`/mymusic/${storedUser?._id}`} />}
+        {storedUser && <SidebarItem Icon={MdFiberNew} Text="Create Music" to={`/newmusic/${storedUser?._id}`} />}
+      </Content>
+
+      {storedUser ? (
+        <UserContainer>
+          <UserName>{userName}</UserName>
+          <button onClick={handleLogout} style={{ padding: '5px 10px', fontSize: '14px', marginTop: '5px' }}>
+            Logout
+          </button>
+        </UserContainer>
+      ) : (
+        <div style={{ padding: '10px' }}>
+          <NavLink to="/login">
+            <button style={{ color: 'black', padding: '5px 10px', fontSize: '14px' }}>Login</button>
+          </NavLink>
+        </div>
+      )}
+    </SidebarContainer>
+  );
+};
 
 export default Sidebar;

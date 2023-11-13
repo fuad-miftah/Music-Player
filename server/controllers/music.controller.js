@@ -19,6 +19,7 @@ export const createMusic = async (req, res, next) => {
             return res.status(400).json(createError(400, 'No files were uploaded.'));
         }
 
+        console.log("req.files", req.files);
         const { audioFile, imageFile } = req.files;
 
         const audioResult = await cloudinary.uploader.upload(audioFile.tempFilePath, {
