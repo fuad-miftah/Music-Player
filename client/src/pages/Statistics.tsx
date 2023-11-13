@@ -1,21 +1,56 @@
-// Statistics.tsx
-
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../reducers/rootReducer';
 import styled from '@emotion/styled';
 
-// Define styled components
 const Container = styled.div`
   color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
 `;
 
 const Heading1 = styled.h1`
-  color: #61dafb; /* You can use your preferred color */
+  color: #61dafb;
+  margin-bottom: 20px;
 `;
 
 const Heading2 = styled.h2`
-  color: #61dafb; /* You can use your preferred color */
+  color: #61dafb;
+  margin-top: 20px;
+`;
+
+const LargeCardContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+
+`;
+
+const LargeCard = styled.div`
+  background-color: #333;
+  border: 1px solid #61dafb;
+  border-radius: 8px;
+  padding: 40px;
+  text-align: center;
+  width: 80%;
+  margin: 20px;
+`;
+
+const SmallCardContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  width: 80%;
+`;
+
+const SmallCard = styled.div`
+  background-color: #333;
+  border: 1px solid #61dafb;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  width: 45%;
+  margin: 20px;
 `;
 
 const ListItem = styled.li`
@@ -32,36 +67,52 @@ const Statistics: React.FC = () => {
   return (
     <Container>
       <Heading1>Music Statistics</Heading1>
-      <p>Total Songs: {musicData.totalSongs}</p>
-      <p>Total Artists: {musicData.totalArtists}</p>
-      <p>Total Albums: {musicData.totalAlbums}</p>
+      <LargeCardContainer>
+      <LargeCard>
+        <h3>Total Songs</h3>
+        <p>{musicData.totalSongs}</p>
+      </LargeCard>
 
+      <LargeCard>
+        <h3>Total Artists</h3>
+        <p>{musicData.totalArtists}</p>
+      </LargeCard>
+
+      <LargeCard>
+        <h3>Total Albums</h3>
+        <p>{musicData.totalAlbums}</p>
+      </LargeCard>
+      </LargeCardContainer>
       <Heading2>Genres</Heading2>
-      <ul>
+
+      <SmallCardContainer>
         {musicData.uniqueGenres.map((genre, index) => (
-          <ListItem key={index}>
-            {genre}: {musicData.songsInEachGenre.find((g) => g.genre === genre)?.count || 0} songs
-          </ListItem>
+          <SmallCard key={index}>
+            <h3>{genre}</h3>
+            <p>{musicData.songsInEachGenre.find((g) => g.genre === genre)?.count || 0} songs</p>
+          </SmallCard>
         ))}
-      </ul>
+      </SmallCardContainer>
 
       <Heading2>Top Artists</Heading2>
-      <ul>
+      <SmallCardContainer>
         {musicData.artistStats.map((artist) => (
-          <ListItem key={artist._id}>
-            {artist._id}: {artist.totalSongs} songs
-          </ListItem>
+          <SmallCard key={artist._id}>
+            <h3>{artist._id}</h3>
+            <p>{artist.totalSongs} songs</p>
+          </SmallCard>
         ))}
-      </ul>
+      </SmallCardContainer>
 
       <Heading2>Top Albums</Heading2>
-      <ul>
+      <SmallCardContainer>
         {musicData.albumStats.map((album) => (
-          <ListItem key={album._id}>
-            {album._id}: {album.songs.length} songs
-          </ListItem>
+          <SmallCard key={album._id}>
+            <h3>{album._id}</h3>
+            <p>{album.songs.length} songs</p>
+          </SmallCard>
         ))}
-      </ul>
+      </SmallCardContainer>
     </Container>
   );
 };

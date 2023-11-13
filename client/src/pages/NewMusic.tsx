@@ -35,8 +35,26 @@ const StyledButton = styled.button`
   padding: 12px;
   border: none;
   border-radius: 4px;
-  cursor: pointer;
+  cursor: ${(props) => (props.loading ? 'not-allowed' : 'pointer')};
   font-size: 1.2em;
+  display: flex;
+  align-items: center;
+`;
+
+const Spinner = styled.div`
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #4CAF50;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  animation: spin 0.7s linear infinite;
+  margin-right: 8px;
+`;
+
+const SuccessMessage = styled.div`
+  color: #4CAF50;
+  font-size: 1.2em;
+  margin-top: 8px;
 `;
 
 const NewMusic = () => {
@@ -49,6 +67,8 @@ const NewMusic = () => {
     imageFile: null,
     audioFile: null,
   });
+  const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -72,6 +92,7 @@ const NewMusic = () => {
     e.preventDefault();
 
     try {
+      setLoading(true);
       const formData = new FormData();
       formData.append('title', musicData.title);
       formData.append('artist', musicData.artist);
@@ -87,10 +108,24 @@ const NewMusic = () => {
         },
       });
 
-      console.log('Music created successfully!');
+      setSuccessMessage('Music created successfully!');
+      clearForm();
     } catch (error) {
       console.error('Error creating music:', error.message);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const clearForm = () => {
+    setMusicData({
+      title: '',
+      artist: '',
+      album: '',
+      genre: '',
+      imageFile: null,
+      audioFile: null,
+    });
   };
 
   return (
@@ -153,7 +188,11 @@ const NewMusic = () => {
           placeholder="Choose audio file"
         />
       </StyledLabel>
-      <StyledButton type="submit">Create Music</StyledButton>
+      <StyledButton type="submit" loading={loading}>
+        {loading && <Spinner />}
+        {!loading && 'Create Music'}
+      </StyledButton>
+      {successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
     </StyledForm>
   );
 };

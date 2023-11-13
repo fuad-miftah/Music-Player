@@ -124,7 +124,6 @@ export const deleteMusic = async (req, res, next) => {
             return res.status(404).json(createError(404, 'Music not found.'));
         }
 
-        if (req.user.role === 'admin' || req.user.music.includes(existingMusic._id.toString())) {
             // Delete images and audio from Cloudinary
             await cloudinary.uploader.destroy(existingMusic.coverImg.public_id);
             await cloudinary.uploader.destroy(existingMusic.audio.public_id, { resource_type: 'video' });
@@ -136,9 +135,7 @@ export const deleteMusic = async (req, res, next) => {
             await Music.findByIdAndDelete(musicId);
 
             res.status(204).end();
-        } else {
-            res.status(403).json(createError(403, 'Access denied. You do not have permission to delete this music.'));
-        }
+        
     } catch (error) {
         console.error('Error during music deletion:', error);
         res.status(500).json(createError(500, 'Internal server error during music deletion.'));
@@ -258,6 +255,73 @@ export const getAllMusicWithStats = async (req, res, next) => {
     }
 };
 
+
+
+// Get All Client Music with Stats
+export const getAllClientMusicWithStats = async (req, res, next) => {
+    try {
+        const userId = req.params.userId;
+
+        if (req.user.id == req.params.userId || req.user.role === 'admin') {
+            const musicList = await Music.find({ user: userId });
+
+            // Get total number of songs for the client
+            const totalSongs = musicList.length;
+
+            // Get unique genres for the client's music
+            const uniqueGenres = [...new Set(musicList.map((music) => music.genre))];
+
+            // Get number of songs in each genre for the client's music
+            const songsInEachGenre = uniqueGenres.map((genre) => {
+                return {
+                    genre,
+                    count: musicList.filter((music) => music.genre === genre).length,
+                };
+            });
+
+           // Get number of songs and albums each artist has
+        const artistStats = await Music.aggregate([
+            {
+                $group: {
+                    _id: '$artist',
+                    totalSongs: { $sum: 1 },
+                    totalAlbums: { $addToSet: '$album' },
+                },
+            },
+        ]);
+
+        // Get songs in each album
+        const albumStats = await Music.aggregate([
+            {
+                $group: {
+                    _id: '$album',
+                    songs: { $push: '$title' },
+                },
+            },
+        ]);
+
+            // Construct the response object for the client's music
+            const response = {
+                totalSongs,
+                totalArtists: artistStats.length,
+                totalAlbums: albumStats.length,
+                uniqueGenres,
+                songsInEachGenre,
+                artistStats,
+                albumStats,
+                musicList,
+            };
+
+            res.status(200).json(createSuccess('Client music with stats retrieved successfully', response));
+        } else {
+            // Handle the case where the user is not an admin
+            res.status(403).json(createError(403, 'Access denied. You do not have permission to retrieve client music with stats.'));
+        }
+    } catch (error) {
+        console.error('Error during fetching client music with stats:', error);
+        res.status(500).json(createError(500, 'Internal server error during fetching client music with stats.'));
+    }
+};
 
 // Export the router
 export default router;
