@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from '@emotion/styled';
+import { createMusicStart } from '../reducers/musicSlice';
 
 const StyledForm = styled.form`
   display: flex;
@@ -9,9 +11,7 @@ const StyledForm = styled.form`
   max-width: 400px;
   margin: auto;
   padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #333;
+  background-color: transparent; /* Removed background color */
 `;
 
 const StyledLabel = styled.label`
@@ -23,15 +23,18 @@ const StyledLabel = styled.label`
 const StyledInput = styled.input`
   padding: 10px;
   margin-bottom: 16px;
-  border-radius: 4px;
+  border-radius: 8px; /* Rounded the input field */
   font-size: 1em;
   width: 100%;
   box-sizing: border-box;
+  background-color: #444; /* Set a background color */
+  border: 1px solid #666; /* Add a border */
+  color: white; /* Text color */
 `;
 
 const StyledButton = styled.button`
-  background-color: #4CAF50;
-  color: white;
+  background-color: #61dafb;
+  color: black;
   padding: 12px;
   border: none;
   border-radius: 4px;
@@ -51,14 +54,18 @@ const Spinner = styled.div`
   margin-right: 8px;
 `;
 
-const SuccessMessage = styled.div`
-  color: #4CAF50;
-  font-size: 1.2em;
+const ErrorMessage = styled.div`
+  color: #ff0000;
+  font-size: 1em;
   margin-top: 8px;
 `;
 
 const NewMusic = () => {
-  const { id } = useParams();
+  const dispatch = useDispatch();
+  const loading = useSelector((state) => state.music.loading);
+  const error = useSelector((state) => state.music.error);
+  const { id: userId } = useParams();
+
   const [musicData, setMusicData] = useState({
     title: '',
     artist: '',
@@ -67,8 +74,6 @@ const NewMusic = () => {
     imageFile: null,
     audioFile: null,
   });
-  const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -91,29 +96,16 @@ const NewMusic = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      setLoading(true);
-      const formData = new FormData();
-      formData.append('title', musicData.title);
-      formData.append('artist', musicData.artist);
-      formData.append('album', musicData.album);
-      formData.append('genre', musicData.genre);
-      formData.append('imageFile', musicData.imageFile);
-      formData.append('audioFile', musicData.audioFile);
-
-      await axios.post(`http://localhost:5555/api/music/${id}`, formData, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      setSuccessMessage('Music created successfully!');
-      clearForm();
-    } catch (error) {
-      console.error('Error creating music:', error.message);
-    } finally {
-      setLoading(false);
+    if (!loading) {
+      try {
+        // Dispatch the createMusicStart action
+        await dispatch(createMusicStart({ musicData, userId }));
+        // Clear the form after successful dispatch
+        clearForm();
+      } catch (error) {
+        // Handle the error (e.g., display an error message)
+        console.error('Error creating music:', error);
+      }
     }
   };
 
@@ -131,7 +123,7 @@ const NewMusic = () => {
   return (
     <StyledForm onSubmit={handleSubmit} encType="multipart/form-data">
       <StyledLabel>
-        Title:
+        Title
         <StyledInput
           type="text"
           name="title"
@@ -141,7 +133,7 @@ const NewMusic = () => {
         />
       </StyledLabel>
       <StyledLabel>
-        Artist:
+        Artist
         <StyledInput
           type="text"
           name="artist"
@@ -151,7 +143,7 @@ const NewMusic = () => {
         />
       </StyledLabel>
       <StyledLabel>
-        Album:
+        Album
         <StyledInput
           type="text"
           name="album"
@@ -161,7 +153,7 @@ const NewMusic = () => {
         />
       </StyledLabel>
       <StyledLabel>
-        Genre:
+        Genre
         <StyledInput
           type="text"
           name="genre"
@@ -171,7 +163,7 @@ const NewMusic = () => {
         />
       </StyledLabel>
       <StyledLabel>
-        Cover Image:
+        Cover Image
         <StyledInput
           type="file"
           name="imageFile"
@@ -180,7 +172,7 @@ const NewMusic = () => {
         />
       </StyledLabel>
       <StyledLabel>
-        Audio File:
+        Audio File
         <StyledInput
           type="file"
           name="audioFile"
@@ -188,11 +180,14 @@ const NewMusic = () => {
           placeholder="Choose audio file"
         />
       </StyledLabel>
+      
+      {/* Display error message if there is an error */}
+      {error && <ErrorMessage>{error.message}</ErrorMessage>}
+      
       <StyledButton type="submit" loading={loading}>
         {loading && <Spinner />}
         {!loading && 'Create Music'}
       </StyledButton>
-      {successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
     </StyledForm>
   );
 };

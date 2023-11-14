@@ -4,6 +4,7 @@ import { RootState } from '../reducers/rootReducer';
 import { fetchDataStart } from '../reducers/musicSlice';
 import Card from '../components/card';
 import styled from '@emotion/styled';
+import { ClipLoader } from 'react-spinners';
 
 const MusicContainer = styled.div`
   display: flex;
@@ -23,6 +24,7 @@ const SearchInput = styled.input`
   border: 2px solid #ddd; /* Border color */
   outline: none; /* Remove default focus outline */
   margin-right: 10px;
+  width: 300px;
   font-size: 16px;
   transition: border-color 0.3s; /* Smooth transition for border color */
 
@@ -35,7 +37,7 @@ const SearchButton = styled.button`
   padding: 10px 16px;
   border-radius: 20px; /* Rounded corners */
   background-color: #000; /* Button background color */
-  color: white; /* Button text color */
+  color: #61dafb; /* Button text color */
   border: none;
   cursor: pointer;
   font-size: 16px;
@@ -58,12 +60,12 @@ const PageNumber = styled.span<{ isActive: boolean }>`
   padding: 8px;
   margin: 0 5px;
   cursor: pointer;
-  color: ${({ isActive }) => (isActive ? 'white' : 'black')};
-  background-color: ${({ isActive }) => (isActive ? 'blue' : 'transparent')};
+  color: ${({ isActive }) => (isActive ? 'black' : 'white')};
+  background-color: ${({ isActive }) => (isActive ? 'white' : 'transparent')};
   border-radius: 4px;
 
   &:hover {
-    background-color: ${({ isActive }) => (isActive ? 'blue' : '#ddd')};
+    background-color: ${({ isActive }) => (isActive ? '#61dafb' : '#ddd')};
   }
 `;
 
@@ -79,7 +81,7 @@ const MusicPage: React.FC = () => {
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState(data?.musicList || []);
+  const [searchResults, setSearchResults] = useState(data?.data?.musicList || []);
 
   // Calculate total pages whenever search results change
   const totalPages = Math.ceil(searchResults.length / itemsPerPage);
@@ -89,7 +91,11 @@ const MusicPage: React.FC = () => {
       // Fetch data when component mounts
       dispatch(fetchDataStart());
     } else {
-      setSearchResults(data.musicList);
+      console.log("data", data);
+
+      console.log("data.musicList", data.data.musicList);
+
+      setSearchResults(data.data.musicList);
     }
   }, [dispatch, data]);
 
@@ -104,10 +110,11 @@ const MusicPage: React.FC = () => {
   const handleSearch = () => {
     if (data) {
       // Filter music based on the search term
-      const filteredResults = data.musicList.filter(
+      const filteredResults = data.data.musicList.filter(
         (item) =>
           item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.artist.toLowerCase().includes(searchTerm.toLowerCase())
+          item.artist.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.album.toLowerCase().includes(searchTerm.toLowerCase())
       );
 
       setSearchResults(filteredResults);
@@ -121,11 +128,17 @@ const MusicPage: React.FC = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <ClipLoader color="#61dafb" loading={loading} size={150} />
+      </div>
+    );
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    console.log("error", error);
+    
+    return <div>Error</div>;
   }
 
   return (
@@ -133,7 +146,7 @@ const MusicPage: React.FC = () => {
       <SearchContainer>
         <SearchInput
           type="text"
-          placeholder="Search by title or artist"
+          placeholder="Search by title, artist or album"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           onKeyPress={handleKeyPress}

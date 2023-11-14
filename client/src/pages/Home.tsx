@@ -5,6 +5,7 @@ import { fetchDataStart } from '../reducers/musicSlice';
 import Card from "../components/card";
 import styled from "@emotion/styled"
 import { Link } from 'react-router-dom';
+import { ClipLoader } from 'react-spinners';
 
 const HomeContainer = styled.div`
   display: flex;
@@ -22,11 +23,11 @@ const Header = styled.div`
 
 const Title = styled.h1`
   flex-grow: 1;
-  color: white;
+  color: #61dafb;
 `;
 
 const ShowAllLink = styled(Link)`
-  color: white;
+  color: #61dafb;
   text-decoration: none;
   cursor: pointer;
 `;
@@ -40,15 +41,23 @@ const CardsContainer = styled.div`
 `;
 
 const Home: React.FC = () => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const { data, loading, error } = useSelector((state: RootState) => state.music);
 
-  useEffect(() => {
-    dispatch(fetchDataStart());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchDataStart());
+  // }, [dispatch]);
+
+  console.log("data", data);
+
+  
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <ClipLoader color="#61dafb" loading={loading} size={150} />
+      </div>
+    );
   }
 
   if (error) {
@@ -68,7 +77,7 @@ const Home: React.FC = () => {
           <ShowAllLink to="/all-recent-music">Show All</ShowAllLink>
         </Header>
         <CardsContainer>
-          {data.musicList.slice(0, 5).map((item) => (
+          {data.data.musicList.slice(0, 5).map((item) => (
             <Card
               key={item._id}
               id={String(item._id)}
@@ -85,7 +94,7 @@ const Home: React.FC = () => {
           <ShowAllLink to="/all-recent-music">Show All</ShowAllLink>
         </Header>
         <CardsContainer>
-          {data.musicList.slice(0, 5).map((item) => (
+          {data.data.musicList.slice(0, 5).map((item) => (
             <Card
               key={item._id}
               id={String(item._id)}

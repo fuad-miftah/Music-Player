@@ -2,143 +2,207 @@ import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { BarChart, Bar, PieChart, Pie, LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
+import { parseISO } from 'date-fns';
+import { ClipLoader } from 'react-spinners'; // Import the ClipLoader component
 
-const Container = styled.div`
+interface GenreStats {
+  genre: string;
+  count: number;
+}
+
+interface ArtistStats {
+  _id: string;
+  totalSongs: number;
+  totalAlbums: string[];
+}
+
+interface AlbumStats {
+  _id: string;
+  songs: string[];
+}
+
+interface MusicData {
+  totalSongs: number;
+  totalArtists: number;
+  totalAlbums: number;
+  uniqueGenres: string[];
+  songsInEachGenre: GenreStats[];
+  artistStats: ArtistStats[];
+  albumStats: AlbumStats[];
+  musicList: any[];
+}
+
+const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#8e5ea2', '#d8b83f'];
+
+const PageContainer = styled.div`
   color: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 1200px;
+  margin: 0 auto;
+`;
+
+const StyledHeader = styled.h1`
+  color: #61dafb;
+  text-align: center;
+`;
+
+const CircleStat = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  justify-content: center;
+  width: 250px;
+  height: 250px;
+  background-color: #61dafb;
+  border-radius: 50%;
+  margin: 10px;
 `;
 
-const Heading1 = styled.h1`
-  color: #61dafb;
-  margin-bottom: 20px;
+const StatLabel = styled.h2`
+  margin: 0;
 `;
 
-const Heading2 = styled.h2`
-  color: #61dafb;
-  margin-top: 20px;
-`;
-
-const LargeCardContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const LargeCard = styled.div`
-  background-color: #333;
-  border: 1px solid #61dafb;
-  border-radius: 8px;
-  padding: 40px;
-  text-align: center;
-  width: 80%;
-  margin: 20px;
-`;
-
-const SmallCardContainer = styled.div`
-  display: flex;
-  justify-content: space-around;
-  width: 80%;
-`;
-
-const SmallCard = styled.div`
-  background-color: #333;
-  border: 1px solid #61dafb;
-  border-radius: 8px;
-  padding: 20px;
-  text-align: center;
-  width: 45%;
-  margin: 20px;
+const SectionContainer = styled.div`
+  margin-bottom: 30px;
+  max-width: 1000px;
+  margin: 0 auto;
 `;
 
 const MyStat: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [musicData, setMusicData] = useState<any>(null);
+  const [musicData, setMusicData] = useState<MusicData | null>(null);
+  const [loading, setLoading] = useState(true); // State to manage loading state
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:5555/api/music/clientwithstat/${id}`,
-          { withCredentials: true }
-        );
-
+        const response = await axios.get(`http://localhost:5555/api/music/clientwithstat/${id}`, { withCredentials: true });
         setMusicData(response.data.data);
       } catch (error) {
         console.error('Error fetching music data:', error);
         // Handle error (e.g., show an error message to the user)
+      } finally {
+        setLoading(false); // Set loading to false when the data fetching is completed
       }
     };
 
     fetchData();
   }, [id]);
 
-  if (!musicData) {
-    return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <ClipLoader color="#61dafb" loading={loading} size={150} />
+      </div>
+    );
   }
 
-  console.log("musicdata.uniqueGenres", musicData.uniqueGenres);
-  
+  if (!musicData) {
+    return <div>Error fetching data</div>;
+  }
+
+  const timeBasedData = musicData.musicList.map((music) => ({
+    date: parseISO(music.createdAt),
+    totalSongs: musicData.musicList.filter(
+      (item) => parseISO(item.createdAt) <= parseISO(music.createdAt)
+    ).length,
+  }));
+
   return (
-    <Container>
-      <Heading1>Music Details</Heading1>
-      <LargeCardContainer>
-        <LargeCard>
-          <h3>Total Songs</h3>
-          <p>{musicData.totalSongs}</p>
-        </LargeCard>
+    <PageContainer>
+      <StyledHeader>Music Statistics</StyledHeader>
 
-        <LargeCard>
-          <h3>Total Artists</h3>
-          <p>{musicData.totalArtists}</p>
-        </LargeCard>
+      <div style={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap' }}>
+        <CircleStat>
+          <StatLabel>Total Songs</StatLabel>
+          <StatLabel>{musicData.totalSongs}</StatLabel>
+        </CircleStat>
 
-        <LargeCard>
-          <h3>Total Albums</h3>
-          <p>{musicData.totalAlbums}</p>
-        </LargeCard>
-      </LargeCardContainer>
+        <CircleStat>
+          <StatLabel>Total Artists</StatLabel>
+          <StatLabel>{musicData.totalArtists}</StatLabel>
+        </CircleStat>
 
-      <Heading2>Genres</Heading2>
+        <CircleStat>
+          <StatLabel>Total Albums</StatLabel>
+          <StatLabel>{musicData.totalAlbums}</StatLabel>
+        </CircleStat>
+      </div>
 
-      <SmallCardContainer>
-        {musicData.uniqueGenres.map((genre: string, index: number) => (
-          <SmallCard key={index}>
-            <h3>{genre}</h3>
-            <p>{musicData.songsInEachGenre.find((g: any) => g.genre === genre)?.count || 0} songs</p>
-          </SmallCard>
-        ))}
-      </SmallCardContainer>
+      <SectionContainer>
+        <h2>Songs in Each Genre:</h2>
+        <ResponsiveContainer width="100%" height={400}>
+          <BarChart data={musicData.songsInEachGenre}>
+            <XAxis dataKey="genre" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="count" fill="#8884d8" />
+          </BarChart>
+        </ResponsiveContainer>
+      </SectionContainer>
 
-      <Heading2>Top Artists</Heading2>
-      <SmallCardContainer>
-        {musicData.artistStats.length > 0 ? (
-          musicData.artistStats.map((artist: any) => (
-            <SmallCard key={artist._id}>
-              <h3>{artist._id}</h3>
-              <p>{artist.totalSongs} songs</p>
-            </SmallCard>
-          ))
-        ) : (
-          <div>No artist stats available</div>
-        )}
-      </SmallCardContainer>
+      <SectionContainer>
+        <h2>Artists Statistics:</h2>
+        <ResponsiveContainer width="100%" height={400}>
+          <PieChart>
+            <Pie
+              data={musicData.artistStats}
+              dataKey="totalSongs"
+              nameKey="_id"
+              cx="50%"
+              cy="50%"
+              outerRadius={80}
+              label
+            >
+              {musicData.artistStats.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip />
+            <Legend layout="vertical" verticalAlign="middle" align="right" />
+          </PieChart>
+        </ResponsiveContainer>
+      </SectionContainer>
 
-      <Heading2>Top Albums</Heading2>
-      <SmallCardContainer>
-        {musicData.albumStats.length > 0 ? (
-          musicData.albumStats.map((album: any) => (
-            <SmallCard key={album._id}>
-              <h3>{album._id}</h3>
-              <p>{album.songs.length} songs</p>
-            </SmallCard>
-          ))
-        ) : (
-          <div>No album stats available</div>
-        )}
-      </SmallCardContainer>
-    </Container>
+      <SectionContainer>
+        <h2>Albums Statistics:</h2>
+        <ResponsiveContainer width="100%" height={400}>
+          <PieChart>
+            <Pie
+              data={musicData.albumStats}
+              dataKey="songs.length"
+              nameKey="_id"
+              cx="50%"
+              cy="50%"
+              outerRadius={80}
+              label
+            >
+              {musicData.albumStats.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip />
+            <Legend layout="vertical" verticalAlign="middle" align="right" />
+          </PieChart>
+        </ResponsiveContainer>
+      </SectionContainer>
+
+      <SectionContainer>
+        <h2>Increase in Songs Over Time:</h2>
+        <ResponsiveContainer width="100%" height={400}>
+          <LineChart data={timeBasedData}>
+            <XAxis dataKey="date" type="category" scale="time" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line type="monotone" dataKey="totalSongs" stroke="#8884d8" />
+          </LineChart>
+        </ResponsiveContainer>
+      </SectionContainer>
+    </PageContainer>
   );
 };
 

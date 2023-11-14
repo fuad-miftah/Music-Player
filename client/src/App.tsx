@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import Sidebar from './components/sidebar';
 import MusicPage from './pages/Music';
 import MusicDetailPage from './pages/MusicDetailPage';
@@ -12,6 +13,7 @@ import NewMusic from './pages/NewMusic';
 import MyStat from './pages/MyStat';
 import MyMusic from './pages/MyMusic';
 import RegistrationPage from './pages/Register';
+import { fetchDataStart } from './reducers/musicSlice';
 
 const globalStyles = css`
   /* Add your global styles here */
@@ -45,6 +47,12 @@ const SidebarLayout = () => (
 );
 
 const App: React.FC = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchDataStart());
+  }, [dispatch]);
+
   return (
     <BrowserRouter>
       <RootContainer>

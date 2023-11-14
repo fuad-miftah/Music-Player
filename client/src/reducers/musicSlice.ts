@@ -56,16 +56,76 @@ const musicSlice = createSlice({
       state.loading = true;
       state.error = null;
     },
-    fetchDataSuccess: (state, action: PayloadAction<{ data: MusicData }>) => {
+    fetchDataSuccess: (state, action: PayloadAction<MusicListItem[]>) => {
       state.loading = false;
-      state.data = action.payload.data;
+      state.data = action.payload;
     },
     fetchDataFailure: (state, action: PayloadAction<string>) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    createMusicStart: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    createMusicSuccess: (state, action: PayloadAction<MusicListItem>) => {
+      state.loading = false;
+      state.error = null;
+    
+      if (state.data) {
+        state.data = {
+          ...state.data,
+          musicList: [...(state.data.musicList || []), action.payload],
+        };
+      }
+    },
+    createMusicFailure: (state, action: PayloadAction<string>) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    updateMusicStart: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    updateMusicSuccess: (state, action: PayloadAction<MusicListItem>) => {
+      state.loading = false;
+      const updatedIndex = state.data.findIndex(item => item._id === action.payload._id);
+      if (updatedIndex !== -1) {
+        state.data[updatedIndex] = action.payload;
+      }
+    },
+    updateMusicFailure: (state, action: PayloadAction<string>) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    deleteMusicStart: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    deleteMusicSuccess: (state, action: PayloadAction<string>) => {
+      state.loading = false;
+      state.data = state.data.filter(item => item._id !== action.payload);
+    },
+    deleteMusicFailure: (state, action: PayloadAction<string>) => {
       state.loading = false;
       state.error = action.payload;
     },
   },
 });
 
-export const { fetchDataStart, fetchDataSuccess, fetchDataFailure } = musicSlice.actions;
+export const {
+  fetchDataStart,
+  fetchDataSuccess,
+  fetchDataFailure,
+  createMusicStart,
+  createMusicSuccess,
+  createMusicFailure,
+  updateMusicStart,
+  updateMusicSuccess,
+  updateMusicFailure,
+  deleteMusicStart,
+  deleteMusicSuccess,
+  deleteMusicFailure,
+} = musicSlice.actions;
+
 export default musicSlice.reducer;

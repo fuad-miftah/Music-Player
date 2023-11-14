@@ -28,12 +28,12 @@ const ModalContainer = styled.div`
   padding: 20px;
   border-radius: 8px;
   background-color: #1e1e1e; /* Black background */
-  color: #fff; /* White text */
+  color: #61dafb; /* White text */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 
   h2 {
     margin-bottom: 16px;
-    color: #4CAF50; /* Green title color */
+    color: #61dafb; /* Green title color */
   }
 `;
 
@@ -54,8 +54,8 @@ const Input = styled.input`
 `;
 
 const Button = styled.button`
-  background-color: #4CAF50;
-  color: white;
+  background-color: #61dafb;
+  color: black;
   padding: 12px;
   border: none;
   border-radius: 4px;

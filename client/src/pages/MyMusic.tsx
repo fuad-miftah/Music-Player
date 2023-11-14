@@ -6,6 +6,11 @@ import { useParams } from 'react-router-dom';
 import UpdateModal from '../components/updateModal';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 
+const Header = styled.h1`
+  flex-grow: 1;
+  color: #61dafb;
+`;
+
 const Container = styled.div`
   color: white;
   display: flex;
@@ -54,10 +59,12 @@ const ButtonContainer = styled.div`
 
 const EditButton = styled(FaEdit)`
   cursor: pointer;
+  color: #61dafb;
 `;
 
 const DeleteButton = styled(FaTrash)`
   cursor: pointer;
+  color: #61dafb;
 `;
 
 const PaginationContainer = styled.div`
@@ -70,13 +77,13 @@ const PageNumber = styled.span<{ isActive: boolean }>`
   padding: 8px;
   margin: 0 5px;
   cursor: pointer;
-  color: ${({ isActive }) => (isActive ? 'white' : 'black')};
-  background-color: ${({ isActive }) => (isActive ? 'blue' : 'transparent')};
+  color: ${({ isActive }) => (isActive ? 'black' : 'white')};
+  background-color: ${({ isActive }) => (isActive ? 'white' : 'transparent')};
   border-radius: 4px;
   transition: background-color 0.3s, color 0.3s;
 
   &:hover {
-    background-color: ${({ isActive }) => (isActive ? 'blue' : '#ddd')};
+    background-color: ${({ isActive }) => (isActive ? '#61dafb' : '#ddd')};
     color: white;
   }
 `;
@@ -137,7 +144,7 @@ const MyMusic: React.FC = () => {
 
   return (
     <Container>
-      <h1>My Music</h1>
+      <Header>My Music</Header>
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
         {currentCards.map((music) => (
           <MusicCard key={music._id}>

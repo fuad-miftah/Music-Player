@@ -1,4 +1,5 @@
 import { v2 as cloudinary } from 'cloudinary';
+import mongoose from 'mongoose';
 import Music from '../models/music.model.js';
 import User from '../models/user.model.js';
 import express from 'express';
@@ -283,32 +284,31 @@ export const getAllClientMusicWithStats = async (req, res, next) => {
                 };
             });
 
-          // Get number of songs and albums each artist has
-      const artistStats = await Music.aggregate([
-        {
-          $match: { user: userId }, // Only consider music from the specific user
-        },
-        {
-          $group: {
-            _id: '$artist',
-            totalSongs: { $sum: 1 },
-            totalAlbums: { $addToSet: '$album' },
-          },
-        },
-      ]);
-
-      // Get songs in each album
-      const albumStats = await Music.aggregate([
-        {
-          $match: { user: userId }, // Only consider music from the specific user
-        },
-        {
-          $group: {
-            _id: '$album',
-            songs: { $push: '$title' },
-          },
-        },
-      ]);
+            const artistStats = await Music.aggregate([
+                {
+                    $match: { user: new mongoose.Types.ObjectId(userId) }, // Only consider music from the specific user
+                },
+                {
+                    $group: {
+                        _id: '$artist',
+                        totalSongs: { $sum: 1 },
+                        totalAlbums: { $addToSet: '$album' },
+                    },
+                },
+            ]);
+            
+            // Get songs in each album for the client's music
+            const albumStats = await Music.aggregate([
+                {
+                    $match: { user: new mongoose.Types.ObjectId(userId) }, // Only consider music from the specific user
+                },
+                {
+                    $group: {
+                        _id: '$album',
+                        songs: { $push: '$title' },
+                    },
+                },
+            ]);
 
             // Construct the response object for the client's music
             const response = {
@@ -332,6 +332,8 @@ export const getAllClientMusicWithStats = async (req, res, next) => {
         res.status(500).json(createError(500, 'Internal server error during fetching client music with stats.'));
     }
 };
+
+
 
 // Export the router
 export default router;
