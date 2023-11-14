@@ -3,7 +3,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { FaHome, FaChartBar, FaMusic } from 'react-icons/fa';
-import { MdFiberNew} from 'react-icons/md';
+import { MdFiberNew } from 'react-icons/md';
 import styled from '@emotion/styled';
 import { NavLink } from 'react-router-dom';
 import { logout } from '../reducers/authSlice';
@@ -66,6 +66,36 @@ const UserContainer = styled.div`
   align-items: center;
 `;
 
+const LogoutButton = styled.button`
+  background-color: #232323;
+  color: white;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 5px;
+
+  &:hover {
+    background-color: #303030;
+  }
+`;
+
+const LoginButton = styled.button`
+  color: white;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 5px;
+  background-color: #232323;
+
+  &:hover {
+    background-color: #303030;
+  }
+`;
+
 const SidebarItem = ({ Icon, Text, to }: { Icon: React.ElementType; Text: string; to: string }) => (
   <SidebarItemContainer to={to} activeClassName="active">
     <Icon />
@@ -96,14 +126,12 @@ const Sidebar = () => {
       {storedUser ? (
         <UserContainer>
           <UserName>{userName}</UserName>
-          <button onClick={handleLogout} style={{ padding: '5px 10px', fontSize: '14px', marginTop: '5px' }}>
-            Logout
-          </button>
+          <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
         </UserContainer>
       ) : (
         <div style={{ padding: '10px' }}>
           <NavLink to="/login">
-            <button style={{ color: 'black', padding: '5px 10px', fontSize: '14px' }}>Login</button>
+            <LoginButton>Login</LoginButton>
           </NavLink>
         </div>
       )}

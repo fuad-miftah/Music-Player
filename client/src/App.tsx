@@ -27,6 +27,7 @@ const globalStyles = css`
 const RootContainer = styled.div`
   display: flex;
   height: 100vh;
+  background-color: #1E1E1E;
 `;
 
 const MainContent = styled.div`

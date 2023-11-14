@@ -1,5 +1,3 @@
-// UpdateModal.tsx
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
@@ -24,16 +22,18 @@ interface MusicData {
 const ModalContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start; /* Align items starting from the same position */
   max-width: 400px;
   margin: auto;
   padding: 20px;
-  border: 1px solid #ccc;
   border-radius: 8px;
-  background-color: #fff;
+  background-color: #1e1e1e; /* Black background */
+  color: #fff; /* White text */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 
   h2 {
     margin-bottom: 16px;
+    color: #4CAF50; /* Green title color */
   }
 `;
 
@@ -41,6 +41,7 @@ const Label = styled.label`
   display: block;
   margin-bottom: 8px;
   font-size: 1em;
+  color: #fff; /* White label text */
 `;
 
 const Input = styled.input`
@@ -116,7 +117,7 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onRequestClose, music
           { withCredentials: true }
         );
         onRequestClose(); // Close the modal after a successful update
-        navigate(`/my-music/${id}`); // Navigate to the MyMusic page
+        navigate(`/mymusic/${id}`); // Navigate to the MyMusic page
       }
     } catch (error) {
       console.error('Error updating music data:', error);
@@ -149,6 +150,17 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onRequestClose, music
       onRequestClose={onRequestClose}
       contentLabel="Update Music Modal"
       ariaHideApp={false}
+      style={{
+        overlay: {
+          backgroundColor: 'rgba(0, 0, 0, 0.5)', // semi-transparent black background
+        },
+        content: {
+          margin: '17.7px auto', // center the modal
+          padding: 0, // remove default padding
+          border: 'none', // remove default border
+          maxWidth: '430px', // set the maximum width of the modal
+        },
+      }}
     >
       <ModalContainer>
         <h2>Update Music</h2>
