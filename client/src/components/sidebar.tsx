@@ -8,7 +8,6 @@ import styled from '@emotion/styled';
 import { NavLink } from 'react-router-dom';
 import { logout } from '../reducers/authSlice';
 
-
 const SidebarContainer = styled.div`
   background-color: #1a1a1a;
   position: fixed;
@@ -18,18 +17,11 @@ const SidebarContainer = styled.div`
   width: 200px;
   display: flex;
   flex-direction: column;
+  justify-content: space-between; /* Push items to the top and bottom */
 `;
 
 const Content = styled.div`
   margin-top: 60px;
-`;
-
-const UserContainer = styled.div`
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: auto; /* Push to the bottom */
 `;
 
 const SidebarItemContainer = styled(NavLink)`
@@ -65,6 +57,13 @@ const UserName = styled.span`
   color: white;
   font-size: 14px;
   margin-bottom: 5px;
+`;
+
+const UserContainer = styled.div`
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const SidebarItem = ({ Icon, Text, to }: { Icon: React.ElementType; Text: string; to: string }) => (

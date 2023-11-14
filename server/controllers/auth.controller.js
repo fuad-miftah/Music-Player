@@ -4,8 +4,12 @@ import { createSuccess } from "../utils/success.js";
 import { createError } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 
+
 export const register = async (req, res, next) => {
   try {
+    // Set the role to "Client" for every user during registration
+    req.body.role = 'Client';
+
     // Validate the request body using the User model
     const validationError = await validateUser(req.body);
     if (validationError) {

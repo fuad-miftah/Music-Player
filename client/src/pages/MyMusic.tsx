@@ -1,8 +1,10 @@
+// MyMusic.tsx
+
 import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
+import UpdateModal from '../components/updateModal'; // UpdateModal file path
 
 const Container = styled.div`
   color: white;
@@ -33,27 +35,44 @@ const ButtonContainer = styled.div`
   justify-content: space-around;
 `;
 
+interface MusicData {
+  _id: string;
+  coverImg: {
+    url: string;
+  };
+  title: string;
+  artist: string;
+  // Add other properties as needed
+}
+
 const MyMusic: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
-  const [musicList, setMusicList] = useState<any[]>([]);
+  const { id } = useParams<{ id: string }>();
+  const [musicList, setMusicList] = useState<MusicData[]>([]);
+  const [updateModalIsOpen, setUpdateModalIsOpen] = useState(false);
+  const [selectedMusicId, setSelectedMusicId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:5555/api/music/user/${id}`,
-          { withCredentials: true }
-        );
-
+        const response = await axios.get(`http://localhost:5555/api/music/user/${id}`, { withCredentials: true });
         setMusicList(response.data.data);
       } catch (error) {
         console.error('Error fetching music data:', error);
-        // Handle error (e.g., show an error message to the user)
       }
     };
 
     fetchData();
   }, [id]);
+
+  const openUpdateModal = (musicId: string) => {
+    setUpdateModalIsOpen(true);
+    setSelectedMusicId(musicId);
+  };
+
+  const closeUpdateModal = () => {
+    setUpdateModalIsOpen(false);
+    setSelectedMusicId(null);
+  };
 
   return (
     <Container>
@@ -64,13 +83,11 @@ const MyMusic: React.FC = () => {
           <h2>{music.title}</h2>
           <p>Artist: {music.artist}</p>
           <ButtonContainer>
-            <Link to={`/update/${music._id}`}>
-              <button>Update</button>
-            </Link>
+            <button onClick={() => openUpdateModal(music._id)}>Update</button>
             <button
               onClick={async () => {
                 try {
-                  await axios.delete(`http://localhost:5555/api/music/${id}/${music._id}`,{withCredentials: true});
+                  await axios.delete(`http://localhost:5555/api/music/${id}/${music._id}`, { withCredentials: true });
                   setMusicList((prevList) => prevList.filter((m) => m._id !== music._id));
                 } catch (error) {
                   console.error('Error deleting music:', error);
@@ -82,8 +99,10 @@ const MyMusic: React.FC = () => {
           </ButtonContainer>
         </MusicCard>
       ))}
+      <UpdateModal isOpen={updateModalIsOpen} onRequestClose={closeUpdateModal} musicId={selectedMusicId} />
     </Container>
   );
 };
 
 export default MyMusic;
+

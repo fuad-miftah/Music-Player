@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 import Sidebar from './components/sidebar';
 import MusicPage from './pages/Music';
 import MusicDetailPage from './pages/MusicDetailPage';
@@ -11,6 +11,7 @@ import LoginPage from './pages/Login';
 import NewMusic from './pages/NewMusic';
 import MyStat from './pages/MyStat';
 import MyMusic from './pages/MyMusic';
+import RegistrationPage from './pages/Register';
 
 const globalStyles = css`
   /* Add your global styles here */
@@ -34,22 +35,31 @@ const MainContent = styled.div`
   // flex-grow: 1; /* Use flex-grow to fill remaining space */
 `;
 
+const SidebarLayout = () => (
+  <>
+    <Global styles={globalStyles} />
+    <Sidebar />
+    <Outlet />
+  </>
+);
+
 const App: React.FC = () => {
   return (
     <BrowserRouter>
       <RootContainer>
-        <Global styles={globalStyles} />
-        <Sidebar />
         <MainContent>
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/statistics" element={<Statistics />} />
-            <Route path='/music' element={<MusicPage />} />
-            <Route path="/music/:id" element={<MusicDetailPage />} />
-            <Route path="/mymusic/:id" element={<MyMusic />} />
-            <Route path="/mystat/:id" element={<MyStat />} />
-            <Route path="/newmusic/:id" element={<NewMusic />} />
+            <Route path="/" element={<SidebarLayout />}>
+              <Route index element={<Home />} />
+              <Route path="/statistics" element={<Statistics />} />
+              <Route path='/music' element={<MusicPage />} />
+              <Route path="/music/:id" element={<MusicDetailPage />} />
+              <Route path="/mymusic/:id" element={<MyMusic />} />
+              <Route path="/mystat/:id" element={<MyStat />} />
+              <Route path="/newmusic/:id" element={<NewMusic />} />
+            </Route>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegistrationPage />} />
           </Routes>
         </MainContent>
       </RootContainer>

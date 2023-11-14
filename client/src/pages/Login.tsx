@@ -1,19 +1,15 @@
-// Import necessary dependencies
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { loginStart } from '../reducers/authSlice';
-import { RootState } from '../reducers/rootReducer';
 
-// Styling using Emotion
 import styled from '@emotion/styled';
 
-// Styled components
 const LoginPageContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh; /* Full viewport height */
+  height: 100vh;
 `;
 
 const LoginForm = styled.form`
@@ -47,43 +43,30 @@ const FormButton = styled.button`
   cursor: pointer;
 `;
 
-const ErrorMessage = styled.div`
-  color: red;
-  margin-bottom: 10px;
+const RegisterLink = styled.div`
+  margin-top: 10px;
+  text-align: center;
 `;
 
 const LoginPage: React.FC = () => {
-  // Use state to manage form input values
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  // Use navigate from React Router
   const navigate = useNavigate();
-
-  // Use dispatch from Redux
   const dispatch = useDispatch();
 
-  // Select error from the Redux state
-  const error = useSelector((state: RootState) => state.auth.error);
-
-  // Function to handle form submission
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Dispatch login action
     dispatch(loginStart({ username, password }));
 
-    // For demonstration purposes, navigate to home page if there's no error
-    if (!error) {
-      navigate('/');
-    }
+    // For demonstration purposes, navigate to home page
+    navigate('/');
   };
 
   return (
     <LoginPageContainer>
       <LoginForm onSubmit={handleLogin}>
-        
-
         <FormLabel htmlFor="username">Username:</FormLabel>
         <FormInput
           type="text"
@@ -101,6 +84,10 @@ const LoginPage: React.FC = () => {
         />
 
         <FormButton type="submit">Login</FormButton>
+
+        <RegisterLink>
+          Don't have an account? <Link to="/register">Register here</Link>
+        </RegisterLink>
       </LoginForm>
     </LoginPageContainer>
   );

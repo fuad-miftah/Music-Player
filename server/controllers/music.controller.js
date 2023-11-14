@@ -67,39 +67,42 @@ export const updateMusic = async (req, res, next) => {
         }
 
         if (req.user.role === 'admin' || (existingMusic.user && existingMusic.user.toString() === req.user.id.toString())) {
-            if (!req.files || Object.keys(req.files).length === 0) {
-                return res.status(400).json(createError(400, 'No files were uploaded.'));
+            let updateFields = {};
+
+            if (req.files) {
+                // Files were uploaded
+                if (req.files.audioFile) {
+                    // Handle audio file
+                    await cloudinary.uploader.destroy(existingMusic.audio.public_id, { resource_type: 'video' });
+                    const audioResult = await cloudinary.uploader.upload(req.files.audioFile.tempFilePath, {
+                        resource_type: 'auto',
+                        folder: 'audio',
+                    });
+                    updateFields['audio.public_id'] = audioResult.public_id;
+                    updateFields['audio.url'] = audioResult.secure_url;
+                }
+
+                if (req.files.imageFile) {
+                    // Handle image file
+                    await cloudinary.uploader.destroy(existingMusic.coverImg.public_id);
+                    const imageResult = await cloudinary.uploader.upload(req.files.imageFile.tempFilePath, {
+                        resource_type: 'image',
+                        folder: 'images',
+                    });
+                    updateFields['coverImg.public_id'] = imageResult.public_id;
+                    updateFields['coverImg.url'] = imageResult.secure_url;
+                }
             }
 
-            const { audioFile, imageFile } = req.files;
-
-            await cloudinary.uploader.destroy(existingMusic.coverImg.public_id);
-            await cloudinary.uploader.destroy(existingMusic.audio.public_id, { resource_type: 'video' });
-
-            const audioResult = await cloudinary.uploader.upload(audioFile.tempFilePath, {
-                resource_type: 'auto',
-                folder: 'audio',
-            });
-
-            const imageResult = await cloudinary.uploader.upload(imageFile.tempFilePath, {
-                resource_type: 'image',
-                folder: 'images',
-            });
+            // Include other non-file fields if they exist
+            if (title) updateFields.title = title;
+            if (artist) updateFields.artist = artist;
+            if (album) updateFields.album = album;
+            if (genre) updateFields.genre = genre;
 
             const updatedMusic = await Music.findByIdAndUpdate(
                 musicId,
-                {
-                    $set: {
-                        title,
-                        artist,
-                        album,
-                        genre,
-                        'coverImg.public_id': imageResult.public_id,
-                        'coverImg.url': imageResult.secure_url,
-                        'audio.public_id': audioResult.public_id,
-                        'audio.url': audioResult.secure_url,
-                    },
-                },
+                { $set: updateFields },
                 { new: true }
             );
 
@@ -112,6 +115,7 @@ export const updateMusic = async (req, res, next) => {
         res.status(500).json(createError(500, 'Internal server error during music update.'));
     }
 };
+
 
 // Delete Music
 export const deleteMusic = async (req, res, next) => {
@@ -279,26 +283,32 @@ export const getAllClientMusicWithStats = async (req, res, next) => {
                 };
             });
 
-           // Get number of songs and albums each artist has
-        const artistStats = await Music.aggregate([
-            {
-                $group: {
-                    _id: '$artist',
-                    totalSongs: { $sum: 1 },
-                    totalAlbums: { $addToSet: '$album' },
-                },
-            },
-        ]);
+          // Get number of songs and albums each artist has
+      const artistStats = await Music.aggregate([
+        {
+          $match: { user: userId }, // Only consider music from the specific user
+        },
+        {
+          $group: {
+            _id: '$artist',
+            totalSongs: { $sum: 1 },
+            totalAlbums: { $addToSet: '$album' },
+          },
+        },
+      ]);
 
-        // Get songs in each album
-        const albumStats = await Music.aggregate([
-            {
-                $group: {
-                    _id: '$album',
-                    songs: { $push: '$title' },
-                },
-            },
-        ]);
+      // Get songs in each album
+      const albumStats = await Music.aggregate([
+        {
+          $match: { user: userId }, // Only consider music from the specific user
+        },
+        {
+          $group: {
+            _id: '$album',
+            songs: { $push: '$title' },
+          },
+        },
+      ]);
 
             // Construct the response object for the client's music
             const response = {
