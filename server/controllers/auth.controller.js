@@ -4,9 +4,11 @@ import { createSuccess } from "../utils/success.js";
 import { createError } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 
+
 export const register = async (req, res, next) => {
   try {
-    // Validate the request body using the User model
+    req.body.role = 'Client';
+
     const validationError = await validateUser(req.body);
     if (validationError) {
       return res.status(validationError.status).json(validationError);
@@ -28,7 +30,6 @@ export const register = async (req, res, next) => {
   }
 };
 
-// Function to validate the User model
 const validateUser = async (userData) => {
   try {
     // Check if email is repeated
@@ -51,12 +52,11 @@ const validateUser = async (userData) => {
     // Validate the rest of the User model
     await User.validate(userData);
 
-    return null; // Return null if validation passes
+    return null;
   } catch (validationError) {
-    return createError(400, validationError.message); // Return validation error
+    return createError(400, validationError.message);
   }
 };
-
 
 export const login = async (req, res, next) => {
   try {
@@ -91,6 +91,17 @@ export const login = async (req, res, next) => {
       })
       .status(200)
       .json(createSuccess("Login successful.", { details: { ...otherDetails }, role, access_token }));
+  } catch (err) {
+    next(err);
+  }
+};
+
+// function to return the user details
+export const getUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return next(createError(404, "User not found!"));
+    res.status(200).json(createSuccess("User found.", user));
   } catch (err) {
     next(err);
   }

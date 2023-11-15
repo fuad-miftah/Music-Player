@@ -18,8 +18,6 @@ export const verifyToken = (req, res, next) => {
 
 export const verifyClient = (req, res, next) => {
     verifyToken(req, res, () => {
-        console.log("verifyClient: req.user.id:", req.user.id);
-        console.log("verifyClient: req.params.id:", req.params.userId);
         
         if ((req.user.id === req.params.userId && req.user.role == "Client") || req.user.role == "Admin") {
             next();
