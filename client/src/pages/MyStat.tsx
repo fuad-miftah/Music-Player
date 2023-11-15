@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { BarChart, Bar, PieChart, Pie, LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 import { parseISO } from 'date-fns';
-import { ClipLoader } from 'react-spinners'; // Import the ClipLoader component
+import { ClipLoader } from 'react-spinners';
 
 interface GenreStats {
   genre: string;
@@ -22,6 +22,30 @@ interface AlbumStats {
   songs: string[];
 }
 
+interface CoverImage {
+  public_id: string;
+  url: string;
+}
+
+interface Audio {
+  public_id: string;
+  url: string;
+}
+
+interface MusicListItem {
+  coverImg: CoverImage;
+  audio: Audio;
+  _id: string;
+  title: string;
+  artist: string;
+  album: string;
+  genre: string;
+  user: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
 interface MusicData {
   totalSongs: number;
   totalArtists: number;
@@ -30,7 +54,7 @@ interface MusicData {
   songsInEachGenre: GenreStats[];
   artistStats: ArtistStats[];
   albumStats: AlbumStats[];
-  musicList: any[];
+  musicList: MusicListItem[];
 }
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#8e5ea2', '#d8b83f'];
@@ -73,7 +97,7 @@ const SectionContainer = styled.div`
 const MyStat: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [musicData, setMusicData] = useState<MusicData | null>(null);
-  const [loading, setLoading] = useState(true); // State to manage loading state
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -82,9 +106,8 @@ const MyStat: React.FC = () => {
         setMusicData(response.data.data);
       } catch (error) {
         console.error('Error fetching music data:', error);
-        // Handle error (e.g., show an error message to the user)
       } finally {
-        setLoading(false); // Set loading to false when the data fetching is completed
+        setLoading(false);
       }
     };
 

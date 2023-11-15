@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from '@emotion/styled';
 import { createMusicStart } from '../reducers/musicSlice';
+import { RootState } from '../reducers/rootReducer';
 
 const StyledForm = styled.form`
   display: flex;
@@ -32,7 +32,7 @@ const StyledInput = styled.input`
   color: white; /* Text color */
 `;
 
-const StyledButton = styled.button`
+const StyledButton = styled.button<{ loading?: boolean }>`
   background-color: #61dafb;
   color: black;
   padding: 12px;
@@ -62,8 +62,8 @@ const ErrorMessage = styled.div`
 
 const NewMusic = () => {
   const dispatch = useDispatch();
-  const loading = useSelector((state) => state.music.loading);
-  const error = useSelector((state) => state.music.error);
+  const loading = useSelector((state: RootState) => state.music.loading);
+  const error = useSelector((state: RootState) => state.music.error);
   const { id: userId } = useParams();
 
   const [musicData, setMusicData] = useState({
@@ -75,7 +75,7 @@ const NewMusic = () => {
     audioFile: null,
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setMusicData((prevData) => ({
       ...prevData,
@@ -83,9 +83,9 @@ const NewMusic = () => {
     }));
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, files } = e.target;
-    const file = files[0];
+    const file = files![0];
 
     setMusicData((prevData) => ({
       ...prevData,
@@ -93,17 +93,18 @@ const NewMusic = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!loading) {
       try {
-        // Dispatch the createMusicStart action
-        await dispatch(createMusicStart({ musicData, userId }));
-        // Clear the form after successful dispatch
-        clearForm();
+        if (userId) {
+          dispatch(createMusicStart({ musicData, userId }));
+          clearForm();
+        } else {
+          console.error('User ID is undefined.');
+        }
       } catch (error) {
-        // Handle the error (e.g., display an error message)
         console.error('Error creating music:', error);
       }
     }
@@ -181,8 +182,7 @@ const NewMusic = () => {
         />
       </StyledLabel>
       
-      {/* Display error message if there is an error */}
-      {error && <ErrorMessage>{error.message}</ErrorMessage>}
+      {error && <ErrorMessage>{error}</ErrorMessage>}
       
       <StyledButton type="submit" loading={loading}>
         {loading && <Spinner />}

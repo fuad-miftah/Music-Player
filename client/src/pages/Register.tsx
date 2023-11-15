@@ -38,7 +38,7 @@ const FormInput = styled.input`
   box-sizing: border-box;
 `;
 
-const FormButton = styled.button`
+const FormButton = styled.button<{ loading?: boolean }>`
   width: 100%;
   padding: 14px;
   background-color: #007bff;
@@ -94,7 +94,6 @@ const RegistrationPage: React.FC = () => {
         setError(response.data.message || 'Registration failed');
       }
     } catch (error) {
-      console.error('Error during registration:', error);
       setError('Registration failed. Please try again.');
     } finally {
       setLoading(false);

@@ -19,33 +19,6 @@ import {
 } from 'recharts';
 import { parseISO } from 'date-fns';
 
-interface GenreStats {
-  genre: string;
-  count: number;
-}
-
-interface ArtistStats {
-  _id: string;
-  totalSongs: number;
-  totalAlbums: string[];
-}
-
-interface AlbumStats {
-  _id: string;
-  songs: string[];
-}
-
-interface MusicData {
-  totalSongs: number;
-  totalArtists: number;
-  totalAlbums: number;
-  uniqueGenres: string[];
-  songsInEachGenre: GenreStats[];
-  artistStats: ArtistStats[];
-  albumStats: AlbumStats[];
-  musicList: any[];
-}
-
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#8e5ea2', '#d8b83f'];
 
 const PageContainer = styled.div`

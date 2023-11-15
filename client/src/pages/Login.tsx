@@ -41,7 +41,7 @@ const FormInput = styled.input`
   box-sizing: border-box;
 `;
 
-const FormButton = styled.button`
+const FormButton = styled.button<{ loading?: boolean }>`
   width: 100%;
   padding: 14px; /* Larger padding */
   background-color: #007bff;
@@ -79,7 +79,6 @@ const LoginPage: React.FC = () => {
 
     try {
       dispatch(loginStart({ username, password }));
-      // If login was successful, navigate to the home page
       navigate('/');
     } catch (err) {
       setError('Invalid username or password. Please try again.');

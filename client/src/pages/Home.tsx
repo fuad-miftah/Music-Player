@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { RootState } from '../reducers/rootReducer';
-import { fetchDataStart } from '../reducers/musicSlice';
 import Card from "../components/card";
 import styled from "@emotion/styled"
 import { Link } from 'react-router-dom';
@@ -41,16 +40,8 @@ const CardsContainer = styled.div`
 `;
 
 const Home: React.FC = () => {
-   const dispatch = useDispatch();
+
   const { data, loading, error } = useSelector((state: RootState) => state.music);
-
-  // useEffect(() => {
-  //   dispatch(fetchDataStart());
-  // }, [dispatch]);
-
-  console.log("data", data);
-
-  
 
   if (loading) {
     return (

@@ -81,26 +81,20 @@ const MusicPage: React.FC = () => {
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState(data?.data?.musicList || []);
+  const [searchResults, setSearchResults] = useState(data?.musicList || []);
 
-  // Calculate total pages whenever search results change
   const totalPages = Math.ceil(searchResults.length / itemsPerPage);
 
   useEffect(() => {
     if (!data) {
-      // Fetch data when component mounts
       dispatch(fetchDataStart());
     } else {
-      console.log("data", data);
-
-      console.log("data.musicList", data.musicList);
-
       setSearchResults(data.musicList);
     }
   }, [dispatch, data]);
 
   useEffect(() => {
-    setCurrentPage(1); // Reset to the first page when search results change
+    setCurrentPage(1);
   }, [searchResults]);
 
   const handlePageChange = (pageNumber: number) => {
@@ -109,7 +103,6 @@ const MusicPage: React.FC = () => {
 
   const handleSearch = () => {
     if (data) {
-      // Filter music based on the search term
       const filteredResults = data.musicList.filter(
         (item) =>
           item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -136,8 +129,6 @@ const MusicPage: React.FC = () => {
   }
 
   if (error) {
-    console.log("error", error);
-    
     return <div>Error</div>;
   }
 
@@ -164,7 +155,7 @@ const MusicPage: React.FC = () => {
             <Card
               key={item._id}
               id={String(item._id)}
-              imageUrl={item.coverImg.url} // Adjust property name
+              imageUrl={item.coverImg.url}
               title={item.title}
               artist={item.artist}
             />

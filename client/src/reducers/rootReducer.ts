@@ -1,5 +1,3 @@
-// rootReducer.ts
-
 import { combineReducers } from '@reduxjs/toolkit';
 import musicReducer from './musicSlice';
 import authReducer from './authSlice';

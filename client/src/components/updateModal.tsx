@@ -55,7 +55,7 @@ const Input = styled.input`
   box-sizing: border-box;
 `;
 
-const Button = styled.button`
+const Button = styled.button<{ loading?: boolean }>`
   background-color: #61dafb;
   color: black;
   padding: 12px;
@@ -113,31 +113,16 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onRequestClose, music
         formData.append('genre', updatedMusicData.genre || '');
         formData.append('coverImage', updatedMusicData.imageFile || '');
         formData.append('audioFile', updatedMusicData.audioFile || '');
-
-        await dispatch(updateMusicStart({ id, musicId, formData }));
-        onRequestClose(); // Close the modal after a successful update
-        navigate(`/mymusic/${id}`); // Navigate to the MyMusic page
+        if(id){
+        dispatch(updateMusicStart({ id, musicId, formData }));
+        onRequestClose();
+        navigate(`/mymusic/${id}`);
+        }
       }
     } catch (error) {
       console.error('Error updating music data:', error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!loading) {
-      try {
-        // Dispatch the createMusicStart action
-        await dispatch(createMusicStart({ musicData, userId }));
-        // Clear the form after successful dispatch
-        clearForm();
-      } catch (error) {
-        // Handle the error (e.g., display an error message)
-        console.error('Error creating music:', error);
-      }
     }
   };
 
@@ -167,13 +152,13 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onRequestClose, music
       ariaHideApp={false}
       style={{
         overlay: {
-          backgroundColor: 'rgba(0, 0, 0, 0.5)', // semi-transparent black background
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
         },
         content: {
-          margin: '17.7px auto', // center the modal
-          padding: 0, // remove default padding
-          border: 'none', // remove default border
-          maxWidth: '430px', // set the maximum width of the modal
+          margin: '17.7px auto',
+          padding: 0,
+          border: 'none',
+          maxWidth: '430px',
         },
       }}
     >

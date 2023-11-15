@@ -16,32 +16,9 @@ import {
   deleteMusicFailure,
 } from './musicSlice';
 
-interface CoverImage {
-  public_id: string;
-  url: string;
-}
-
-interface Audio {
-  public_id: string;
-  url: string;
-}
-
-interface MusicListItem {
-  coverImg: CoverImage;
-  audio: Audio;
-  _id: string;
-  title: string;
-  artist: string;
-  album: string;
-  genre: string;
-  user: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-}
 
 interface MusicFormData {
-  _id: string; // Assuming this is the ID for the music entry, adjust it based on your actual data model
+  _id: string; 
   title: string;
   artist: string;
   album: string;
@@ -68,7 +45,6 @@ function* createMusicSaga(action: PayloadAction<{ musicData: MusicFormData; user
         'Content-Type': 'multipart/form-data',
       },
     });
-    console.log("createMusicSaga: ", response.data);
     
     yield put(createMusicSuccess(response.data));
   } catch (error) {
@@ -80,7 +56,6 @@ function* updateMusicSaga(action: PayloadAction<{ id: string; musicId: string; f
   try {
     const { id, musicId, formData } = action.payload;
     const response = yield call(axios.put, `http://localhost:5555/api/music/${id}/${musicId}`, formData,{ withCredentials: true });
-    console.log("updateMusicSaga: ", response.data);
     
     yield put(updateMusicSuccess(response.data.data));
   } catch (error) {
@@ -91,11 +66,8 @@ function* updateMusicSaga(action: PayloadAction<{ id: string; musicId: string; f
 function* deleteMusicSaga(action: PayloadAction<{ id: string; musicId: string }>): Generator<any, void, any> {
   try {
     const { id, musicId } = action.payload;
-
-    // Make the API call to delete the music
     yield call(axios.delete, `http://localhost:5555/api/music/${id}/${musicId}`, { withCredentials: true });
 
-    // Dispatch the deleteMusicSuccess action with the music ID that was deleted
     yield put(deleteMusicSuccess(musicId));
   } catch (error) {
     yield put(deleteMusicFailure(error));

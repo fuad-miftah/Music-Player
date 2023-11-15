@@ -1,9 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export const VERIFY_USER_START = 'VERIFY_USER_START';
-export const VERIFY_USER_SUCCESS = 'VERIFY_USER_SUCCESS';
-export const VERIFY_USER_FAILURE = 'VERIFY_USER_FAILURE';
-
 interface UserDetails {
   _id: string;
   firstName: string;
@@ -15,6 +11,16 @@ interface UserDetails {
   createdAt: string;
   updatedAt: string;
   __v: number;
+}
+
+interface LoginResponseData {
+  success: string;
+  message: string;
+  data: {
+    details: UserDetails;
+    role: string;
+    access_token: string;
+  };
 }
 
 interface AuthState {
@@ -33,14 +39,14 @@ export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    loginStart: (state) => {
+    loginStart: (state, action: PayloadAction<{ username: string; password: string }>) => {
       state.error = null;
+      console.log(action);
     },
-    loginSuccess: (state, action: PayloadAction<{ data: { details: UserDetails; access_token: string } }>) => {
+    loginSuccess: (state, action: PayloadAction<LoginResponseData>) => {
       state.isAuthenticated = true;
       state.user = action.payload.data.details;
       localStorage.setItem('user', JSON.stringify(state.user));
-      console.log('loginSuccess:', state.user);
 
       const { access_token } = action.payload.data;
       document.cookie = `access_token=${access_token}; path=/`;
@@ -55,13 +61,12 @@ export const authSlice = createSlice({
       state.error = null;
       localStorage.removeItem('user');
     },
-    verifyUserStart: (state) => {
-      console.log('verifyUserStart:');
+    verifyUserStart: (state, action: PayloadAction<{ _id: string; }>) => {
+      console.log(action);
       state.error = null;
     },
     verifyUserSuccess: (state) => {
       state.isAuthenticated = true;
-      console.log('verifyUserSuccess:');
     },
     verifyUserFailure: (state, action: PayloadAction<string>) => {
       console.log('verifyUserFailure:');

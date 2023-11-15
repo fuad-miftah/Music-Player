@@ -1,13 +1,15 @@
-// Sidebar.tsx
-
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaHome, FaChartBar, FaMusic } from 'react-icons/fa';
 import { MdFiberNew } from 'react-icons/md';
 import styled from '@emotion/styled';
-import { NavLink } from 'react-router-dom';
+import { NavLink, NavLinkProps } from 'react-router-dom';
 import { logout } from '../reducers/authSlice';
 import { RootState } from '../reducers/rootReducer';
+
+interface SidebarItemContainerProps extends NavLinkProps {
+  activeClassName: string;
+}
 
 const SidebarContainer = styled.div`
   background-color: #1a1a1a;
@@ -25,7 +27,7 @@ const Content = styled.div`
   margin-top: 60px;
 `;
 
-const SidebarItemContainer = styled(NavLink)`
+const SidebarItemContainer = styled(NavLink)<SidebarItemContainerProps>`
   display: flex;
   align-items: center;
   background-color: #232323;

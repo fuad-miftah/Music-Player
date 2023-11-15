@@ -1,9 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 type CardProps = {
-  id: string; // Add an 'id' property to the CardProps
+  id: string;
   imageUrl: string;
   title: string;
   artist: string;

@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Sidebar from './components/sidebar';
 import MusicPage from './pages/Music';
 import MusicDetailPage from './pages/MusicDetailPage';
@@ -14,8 +14,6 @@ import MyStat from './pages/MyStat';
 import MyMusic from './pages/MyMusic';
 import RegistrationPage from './pages/Register';
 import { fetchDataStart } from './reducers/musicSlice';
-import { RootState } from './reducers/rootReducer';
-import axios from 'axios';
 import { verifyUserStart } from './reducers/authSlice';
 
 const globalStyles = css`
@@ -53,7 +51,7 @@ const App: React.FC = () => {
   const dispatch = useDispatch();
 
   const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
-  const _id = storedUser?._id;
+  const _id: string = storedUser?._id;
 
   
   useEffect(() => {

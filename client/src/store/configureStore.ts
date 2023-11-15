@@ -1,5 +1,3 @@
-// configureStore.ts
-
 import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
 import { rootSaga } from '../reducers/rootSaga';

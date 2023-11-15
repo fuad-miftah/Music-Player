@@ -1,4 +1,3 @@
-// musicSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface CoverImage {
@@ -42,6 +41,15 @@ interface MusicState {
   error: string | null;
 }
 
+interface MusicFormData {
+  title: string;
+  artist: string;
+  album: string;
+  genre: string;
+  imageFile: File | null;
+  audioFile: File | null;
+}
+
 const initialState: MusicState = {
   data: {
     totalSongs: 0,
@@ -51,7 +59,7 @@ const initialState: MusicState = {
     songsInEachGenre: [],
     artistStats: [],
     albumStats: [],
-    musicList: [], // Initialize musicList as an empty array
+    musicList: [],
   },
   loading: false,
   error: null,
@@ -73,14 +81,15 @@ const musicSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-    createMusicStart: (state) => {
+    createMusicStart: (state, action: PayloadAction<{ musicData: MusicFormData; userId: string }>) => {
       state.loading = true;
       state.error = null;
+      console.log(action);
+      
     },
     createMusicSuccess: (state, action) => {
       state.loading = false;
       state.error = null;
-      console.log("createMusicSuccess: ", action.payload);
       
       if (action.payload && action.payload.data) {
         state.data!.musicList.push(action.payload.data);
@@ -91,9 +100,13 @@ const musicSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-    updateMusicStart: (state) => {
+    updateMusicStart: (
+      state,
+      action: PayloadAction<{ id: string; musicId: string; formData: FormData }>
+    ) => {
       state.loading = true;
       state.error = null;
+      console.log(action);
     },
     updateMusicSuccess: (state, action: PayloadAction<MusicListItem>) => {
       state.loading = false;
@@ -106,9 +119,11 @@ const musicSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-    deleteMusicStart: (state) => {
+    deleteMusicStart: (state, action: PayloadAction<{ id: string; musicId: string }>) => {
       state.loading = true;
       state.error = null;
+      console.log(action);
+      
     },
     deleteMusicSuccess: (state, action: PayloadAction<string>) => {
       state.loading = false;
