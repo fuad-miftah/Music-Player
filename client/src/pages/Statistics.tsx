@@ -86,7 +86,7 @@ const SectionContainer = styled.div`
 
 const Statistics: React.FC = () => {
 
-  const musicData = useSelector((state: RootState) => state.music.data.data);
+  const musicData = useSelector((state: RootState) => state.music.data);
   const loading = useSelector((state: RootState) => state.music.loading);
   console.log("musicData", musicData);
   

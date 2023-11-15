@@ -53,7 +53,7 @@ interface MusicFormData {
 function* fetchDataSaga(): Generator<any, void, any> {
   try {
     const response = yield call(axios.get, 'http://localhost:5555/api/music/allwithstat');
-    yield put(fetchDataSuccess(response.data));
+    yield put(fetchDataSuccess(response.data.data));
   } catch (error) {
     yield put(fetchDataFailure(error));
   }
@@ -68,25 +68,35 @@ function* createMusicSaga(action: PayloadAction<{ musicData: MusicFormData; user
         'Content-Type': 'multipart/form-data',
       },
     });
+    console.log("createMusicSaga: ", response.data);
+    
     yield put(createMusicSuccess(response.data));
   } catch (error) {
     yield put(createMusicFailure(error));
   }
 }
 
-function* updateMusicSaga(action: PayloadAction<any>): Generator<any, void, any> {
+function* updateMusicSaga(action: PayloadAction<{ id: string; musicId: string; formData: MusicFormData }>): Generator<any, void, any> {
   try {
-    const response = yield call(axios.put, `http://localhost:5555/api/music/update/${action.payload._id}`, action.payload);
-    yield put(updateMusicSuccess(response.data));
+    const { id, musicId, formData } = action.payload;
+    const response = yield call(axios.put, `http://localhost:5555/api/music/${id}/${musicId}`, formData,{ withCredentials: true });
+    console.log("updateMusicSaga: ", response.data);
+    
+    yield put(updateMusicSuccess(response.data.data));
   } catch (error) {
     yield put(updateMusicFailure(error));
   }
 }
 
-function* deleteMusicSaga(action: PayloadAction<string>): Generator<any, void, any> {
+function* deleteMusicSaga(action: PayloadAction<{ id: string; musicId: string }>): Generator<any, void, any> {
   try {
-    yield call(axios.delete, `http://localhost:5555/api/music/delete/${action.payload}`);
-    yield put(deleteMusicSuccess(action.payload));
+    const { id, musicId } = action.payload;
+
+    // Make the API call to delete the music
+    yield call(axios.delete, `http://localhost:5555/api/music/${id}/${musicId}`, { withCredentials: true });
+
+    // Dispatch the deleteMusicSuccess action with the music ID that was deleted
+    yield put(deleteMusicSuccess(musicId));
   } catch (error) {
     yield put(deleteMusicFailure(error));
   }

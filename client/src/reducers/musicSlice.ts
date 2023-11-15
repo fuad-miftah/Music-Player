@@ -43,7 +43,16 @@ interface MusicState {
 }
 
 const initialState: MusicState = {
-  data: null,
+  data: {
+    totalSongs: 0,
+    totalArtists: 0,
+    totalAlbums: 0,
+    uniqueGenres: [],
+    songsInEachGenre: [],
+    artistStats: [],
+    albumStats: [],
+    musicList: [], // Initialize musicList as an empty array
+  },
   loading: false,
   error: null,
 };
@@ -56,7 +65,7 @@ const musicSlice = createSlice({
       state.loading = true;
       state.error = null;
     },
-    fetchDataSuccess: (state, action: PayloadAction<MusicListItem[]>) => {
+    fetchDataSuccess: (state, action: PayloadAction<MusicData>) => {
       state.loading = false;
       state.data = action.payload;
     },
@@ -68,15 +77,14 @@ const musicSlice = createSlice({
       state.loading = true;
       state.error = null;
     },
-    createMusicSuccess: (state, action: PayloadAction<MusicListItem>) => {
+    createMusicSuccess: (state, action) => {
       state.loading = false;
       state.error = null;
-    
-      if (state.data) {
-        state.data = {
-          ...state.data,
-          musicList: [...(state.data.musicList || []), action.payload],
-        };
+      console.log("createMusicSuccess: ", action.payload);
+      
+      if (action.payload && action.payload.data) {
+        state.data!.musicList.push(action.payload.data);
+        state.data!.totalSongs = (state.data!.totalSongs || 0) + 1;
       }
     },
     createMusicFailure: (state, action: PayloadAction<string>) => {
@@ -89,9 +97,9 @@ const musicSlice = createSlice({
     },
     updateMusicSuccess: (state, action: PayloadAction<MusicListItem>) => {
       state.loading = false;
-      const updatedIndex = state.data.findIndex(item => item._id === action.payload._id);
+      const updatedIndex = state.data!.musicList.findIndex(item => item._id === action.payload._id);
       if (updatedIndex !== -1) {
-        state.data[updatedIndex] = action.payload;
+        state.data!.musicList[updatedIndex] = action.payload;
       }
     },
     updateMusicFailure: (state, action: PayloadAction<string>) => {
@@ -104,7 +112,7 @@ const musicSlice = createSlice({
     },
     deleteMusicSuccess: (state, action: PayloadAction<string>) => {
       state.loading = false;
-      state.data = state.data.filter(item => item._id !== action.payload);
+      state.data!.musicList = state.data!.musicList.filter(item => item._id !== action.payload);
     },
     deleteMusicFailure: (state, action: PayloadAction<string>) => {
       state.loading = false;

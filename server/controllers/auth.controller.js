@@ -99,3 +99,14 @@ export const login = async (req, res, next) => {
     next(err);
   }
 };
+
+// function to return the user details
+export const getUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return next(createError(404, "User not found!"));
+    res.status(200).json(createSuccess("User found.", user));
+  } catch (err) {
+    next(err);
+  }
+}

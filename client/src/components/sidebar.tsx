@@ -1,12 +1,13 @@
 // Sidebar.tsx
 
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { FaHome, FaChartBar, FaMusic } from 'react-icons/fa';
 import { MdFiberNew } from 'react-icons/md';
 import styled from '@emotion/styled';
 import { NavLink } from 'react-router-dom';
 import { logout } from '../reducers/authSlice';
+import { RootState } from '../reducers/rootReducer';
 
 const SidebarContainer = styled.div`
   background-color: #1a1a1a;
@@ -105,6 +106,7 @@ const SidebarItem = ({ Icon, Text, to }: { Icon: React.ElementType; Text: string
 
 const Sidebar = () => {
   const dispatch = useDispatch();
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
   const userName = storedUser?.username || '';
 
@@ -118,12 +120,12 @@ const Sidebar = () => {
         <SidebarItem Icon={FaHome} Text="Home" to="/" />
         <SidebarItem Icon={FaChartBar} Text="Statistics" to="/statistics" />
         <SidebarItem Icon={FaMusic} Text="Music" to="/music" />
-        {storedUser && <SidebarItem Icon={FaChartBar} Text="My Stat" to={`/mystat/${storedUser?._id}`} />}
-        {storedUser && <SidebarItem Icon={FaMusic} Text="My Music" to={`/mymusic/${storedUser?._id}`} />}
-        {storedUser && <SidebarItem Icon={MdFiberNew} Text="Create Music" to={`/newmusic/${storedUser?._id}`} />}
+        {isAuthenticated && <SidebarItem Icon={FaChartBar} Text="My Stat" to={`/mystat/${storedUser?._id}`} />}
+        {isAuthenticated && <SidebarItem Icon={FaMusic} Text="My Music" to={`/mymusic/${storedUser?._id}`} />}
+        {isAuthenticated && <SidebarItem Icon={MdFiberNew} Text="Create Music" to={`/newmusic/${storedUser?._id}`} />}
       </Content>
 
-      {storedUser ? (
+      {isAuthenticated ? (
         <UserContainer>
           <UserName>{userName}</UserName>
           <LogoutButton onClick={handleLogout}>Logout</LogoutButton>

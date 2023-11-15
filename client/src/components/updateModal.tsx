@@ -3,6 +3,8 @@ import axios from 'axios';
 import Modal from 'react-modal';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { useDispatch } from 'react-redux';
+import { updateMusicStart } from '../reducers/musicSlice';
 
 interface UpdateModalProps {
   isOpen: boolean;
@@ -66,6 +68,7 @@ const Button = styled.button`
 `;
 
 const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onRequestClose, musicId }) => {
+  const dispatch = useDispatch();
   const { id } = useParams();
   const navigate = useNavigate();
   const [updatedMusicData, setUpdatedMusicData] = useState<Partial<MusicData>>({
@@ -111,11 +114,7 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onRequestClose, music
         formData.append('coverImage', updatedMusicData.imageFile || '');
         formData.append('audioFile', updatedMusicData.audioFile || '');
 
-        await axios.put(
-          `http://localhost:5555/api/music/${id}/${musicId}`,
-          formData,
-          { withCredentials: true }
-        );
+        await dispatch(updateMusicStart({ id, musicId, formData }));
         onRequestClose(); // Close the modal after a successful update
         navigate(`/mymusic/${id}`); // Navigate to the MyMusic page
       }
@@ -123,6 +122,22 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onRequestClose, music
       console.error('Error updating music data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!loading) {
+      try {
+        // Dispatch the createMusicStart action
+        await dispatch(createMusicStart({ musicData, userId }));
+        // Clear the form after successful dispatch
+        clearForm();
+      } catch (error) {
+        // Handle the error (e.g., display an error message)
+        console.error('Error creating music:', error);
+      }
     }
   };
 

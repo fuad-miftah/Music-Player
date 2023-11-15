@@ -41,7 +41,7 @@ const CardsContainer = styled.div`
 `;
 
 const Home: React.FC = () => {
-  // const dispatch = useDispatch();
+   const dispatch = useDispatch();
   const { data, loading, error } = useSelector((state: RootState) => state.music);
 
   // useEffect(() => {
@@ -77,7 +77,7 @@ const Home: React.FC = () => {
           <ShowAllLink to="/all-recent-music">Show All</ShowAllLink>
         </Header>
         <CardsContainer>
-          {data.data.musicList.slice(0, 5).map((item) => (
+          {data.musicList.slice(0, 5).map((item) => (
             <Card
               key={item._id}
               id={String(item._id)}
@@ -94,7 +94,7 @@ const Home: React.FC = () => {
           <ShowAllLink to="/all-recent-music">Show All</ShowAllLink>
         </Header>
         <CardsContainer>
-          {data.data.musicList.slice(0, 5).map((item) => (
+          {data.musicList.slice(0, 5).map((item) => (
             <Card
               key={item._id}
               id={String(item._id)}

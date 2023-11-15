@@ -93,9 +93,9 @@ const MusicPage: React.FC = () => {
     } else {
       console.log("data", data);
 
-      console.log("data.musicList", data.data.musicList);
+      console.log("data.musicList", data.musicList);
 
-      setSearchResults(data.data.musicList);
+      setSearchResults(data.musicList);
     }
   }, [dispatch, data]);
 
@@ -110,7 +110,7 @@ const MusicPage: React.FC = () => {
   const handleSearch = () => {
     if (data) {
       // Filter music based on the search term
-      const filteredResults = data.data.musicList.filter(
+      const filteredResults = data.musicList.filter(
         (item) =>
           item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
           item.artist.toLowerCase().includes(searchTerm.toLowerCase()) ||

@@ -5,6 +5,8 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import UpdateModal from '../components/updateModal';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import { useDispatch } from 'react-redux';
+import { deleteMusicStart } from '../reducers/musicSlice';
 
 const Header = styled.h1`
   flex-grow: 1;
@@ -89,6 +91,7 @@ const PageNumber = styled.span<{ isActive: boolean }>`
 `;
 
 const MyMusic: React.FC = () => {
+  const dispatch = useDispatch();
   const { id } = useParams<{ id: string }>();
   const [musicList, setMusicList] = useState([] as any[]);
   const [updateModalIsOpen, setUpdateModalIsOpen] = useState(false);
@@ -111,9 +114,20 @@ const MyMusic: React.FC = () => {
   const openUpdateModal = (musicId: string) => {
     setUpdateModalIsOpen(true);
     setSelectedMusicId(musicId);
+
   };
 
   const closeUpdateModal = () => {
+    axios.get(`http://localhost:5555/api/music/user/${id}`, { withCredentials: true })
+    .then(response => {
+      console.log('Updated music data:', response.data.data);
+      
+      // Update the music list with the fetched data
+      setMusicList(response.data.data);
+    })
+    .catch(error => {
+      console.error('Error fetching updated music data:', error);
+    });
     setUpdateModalIsOpen(false);
     setSelectedMusicId(null);
   };
@@ -131,11 +145,25 @@ const MyMusic: React.FC = () => {
 
   const handleDelete = async (musicId: string) => {
     const shouldDelete = window.confirm('Are you sure you want to delete?');
-
+  
     if (shouldDelete) {
       try {
-        await axios.delete(`http://localhost:5555/api/music/${id}/${musicId}`, { withCredentials: true });
-        setMusicList((prevList) => prevList.filter((m) => m._id !== musicId));
+        // Dispatch the deleteMusicStart action with the userId and musicId
+        await new Promise<void>((resolve) => {
+          dispatch(deleteMusicStart({ id, musicId }));
+          resolve(); // Resolve the promise after dispatching
+        });
+
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // After successful deletion, fetch the updated data
+        const response = await axios.get(`http://localhost:5555/api/music/user/${id}`, {
+          withCredentials: true
+        });
+        console.log('Updated music data:', response.data.data);
+        
+        // Update the music list with the fetched data
+        setMusicList(response.data.data);
       } catch (error) {
         console.error('Error deleting music:', error);
       }
