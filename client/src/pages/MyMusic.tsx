@@ -28,8 +28,10 @@ interface Music {
 }
 
 const Header = styled.h1`
-  flex-grow: 1;
-  color: #61dafb;
+font-size: 2.5rem;
+color: white;
+align-self: start;
+padding-left: 20px;
 `;
 
 const Container = styled.div`
@@ -41,7 +43,7 @@ const Container = styled.div`
 `;
 
 const MusicCard = styled.div`
-  background-color: #000;
+  background-color: #05386B;
   color: #fff;
   border-radius: 10px;
   overflow: hidden;
@@ -69,7 +71,7 @@ const Title = styled.h3`
 
 const ArtistName = styled.p`
   font-size: 1rem;
-  opacity: 0.8;
+  color: #EDF5E1;
 `;
 
 const ButtonContainer = styled.div`
@@ -80,12 +82,12 @@ const ButtonContainer = styled.div`
 
 const EditButton = styled(FaEdit)`
   cursor: pointer;
-  color: #61dafb;
+  color: #5CDB95;
 `;
 
 const DeleteButton = styled(FaTrash)`
   cursor: pointer;
-  color: #61dafb;
+  color: #5CDB95;
 `;
 
 const PaginationContainer = styled.div`
@@ -98,15 +100,22 @@ const PageNumber = styled.span<{ isActive: boolean }>`
   padding: 8px;
   margin: 0 5px;
   cursor: pointer;
-  color: ${({ isActive }) => (isActive ? 'black' : 'white')};
-  background-color: ${({ isActive }) => (isActive ? 'white' : 'transparent')};
+  color: ${({ isActive }) => (isActive ? '#EDF5E1' : 'white')};
+  background-color: ${({ isActive }) => (isActive ? '#05386B' : 'transparent')};
   border-radius: 4px;
   transition: background-color 0.3s, color 0.3s;
 
   &:hover {
-    background-color: ${({ isActive }) => (isActive ? '#61dafb' : '#ddd')};
+    background-color: ${({ isActive }) => (isActive ? '#8EE4AF' : '#379683')};
     color: white;
   }
+`;
+
+const Error = styled.div`
+  color: #05386B; 
+  padding: 30px;
+  margin: 20px 0; 
+  font-size: 20em;
 `;
 
 const MyMusic: React.FC = () => {
@@ -187,6 +196,9 @@ const MyMusic: React.FC = () => {
     }
   };
 
+  if(musicList.length === 0){
+    return <Error>No Music</Error>;
+  }
   return (
     <Container>
       <Header>My Music</Header>

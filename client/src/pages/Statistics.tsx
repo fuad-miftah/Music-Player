@@ -2,7 +2,6 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../reducers/rootReducer';
 import styled from '@emotion/styled';
-import { ClipLoader } from 'react-spinners';
 import {
   BarChart,
   Bar,
@@ -19,7 +18,7 @@ import {
 } from 'recharts';
 import { parseISO } from 'date-fns';
 
-const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#8e5ea2', '#d8b83f'];
+const COLORS = ['#008000', '#FFFF00', '#FF0000', '#0000FF', '#FFA500', '#800080', '#FFC0CB', '#000000', '#FFFFFF', '#8B4513'];
 
 const PageContainer = styled.div`
   color: white;
@@ -30,8 +29,16 @@ const PageContainer = styled.div`
 `;
 
 const StyledHeader = styled.h1`
-  color: #61dafb;
+font-size: 2.5rem;
+  color: white;
   text-align: center;
+`;
+
+const StyledSubHeader = styled.h3`
+font-size: 2rem;
+color: white;
+  text-align: center;
+  align-self: center;
 `;
 
 const CircleStat = styled.div`
@@ -41,7 +48,7 @@ const CircleStat = styled.div`
   justify-content: center;
   width: 250px;
   height: 250px;
-  background-color: #61dafb;
+  background-color: #05386B;
   border-radius: 50%;
   margin: 10px;
 `;
@@ -56,20 +63,20 @@ const SectionContainer = styled.div`
   margin: 0 auto;
 `;
 
+const Error = styled.div`
+  color: #05386B; 
+  padding: 30px;
+  margin: 20px 0; 
+  font-size: 20em;
+`;
 
 const Statistics: React.FC = () => {
 
   const musicData = useSelector((state: RootState) => state.music.data);
-  const loading = useSelector((state: RootState) => state.music.loading);
-  console.log("musicData", musicData);
   
 
   if (!musicData) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <ClipLoader color="#61dafb" loading={loading} size={150} />
-      </div>
-    );
+    return <Error>No Data</Error>
   }
 
   const timeBasedData = musicData.musicList.map((music) => ({
@@ -101,20 +108,20 @@ const Statistics: React.FC = () => {
       </div>
 
       <SectionContainer>
-        <h2>Songs in Each Genre:</h2>
+        <StyledSubHeader>Songs in Each Genre</StyledSubHeader>
         <ResponsiveContainer width="100%" height={400}>
           <BarChart data={musicData.songsInEachGenre}>
             <XAxis dataKey="genre" />
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="count" fill="#8884d8" />
+            <Bar dataKey="count" fill="#05386B" />
           </BarChart>
         </ResponsiveContainer>
       </SectionContainer>
 
       <SectionContainer>
-        <h2>Artists Statistics:</h2>
+        <StyledSubHeader>Artists Statistics</StyledSubHeader>
         <ResponsiveContainer width="100%" height={400}>
           <PieChart>
             <Pie
@@ -137,7 +144,7 @@ const Statistics: React.FC = () => {
       </SectionContainer>
 
       <SectionContainer>
-        <h2>Albums Statistics:</h2>
+        <StyledSubHeader>Albums Statistics</StyledSubHeader>
         <ResponsiveContainer width="100%" height={400}>
           <PieChart>
             <Pie
@@ -160,14 +167,14 @@ const Statistics: React.FC = () => {
       </SectionContainer>
 
       <SectionContainer>
-        <h2>Increase in Songs Over Time:</h2>
+        <StyledSubHeader>Increase in Songs Over Time</StyledSubHeader>
         <ResponsiveContainer width="100%" height={400}>
           <LineChart data={timeBasedData}>
             <XAxis dataKey="date" type="category" scale="time" />
             <YAxis />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="totalSongs" stroke="#8884d8" />
+            <Line type="monotone" dataKey="totalSongs" stroke="#05386B" />
           </LineChart>
         </ResponsiveContainer>
       </SectionContainer>

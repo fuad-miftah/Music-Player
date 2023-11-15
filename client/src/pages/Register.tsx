@@ -9,17 +9,15 @@ const RegistrationPageContainer = styled.div`
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #1e1e1e;
 `;
 
 const RegistrationForm = styled.form`
   width: 400px;
   padding: 20px;
-  border: 1px solid #ccc;
+  border: 1px solid #379683;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  background-color: #1e1e1e;
-  color: #fff;
+  box-shadow: 0 0 2px #8EE4AF;
+  color: #05386B;
 `;
 
 const FormLabel = styled.label`
@@ -41,7 +39,7 @@ const FormInput = styled.input`
 const FormButton = styled.button<{ loading?: boolean }>`
   width: 100%;
   padding: 14px;
-  background-color: #007bff;
+  background-color: #05386B;
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -61,6 +59,10 @@ const LoginLink = styled.div`
   color: #fff;
 `;
 
+const RegisterHere = styled.span`
+  color: #05386B;
+  `;
+
 const RegistrationPage: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -79,6 +81,16 @@ const RegistrationPage: React.FC = () => {
       return;
     }
 
+    if(!username || !password || !email) {
+      setError('Please fill in all fields');
+      return;
+    }
+
+    if(password.length < 6){
+      setError('Password must be at least 6 char');
+      return;
+    }
+
     try {
       setLoading(true);
 
@@ -94,7 +106,9 @@ const RegistrationPage: React.FC = () => {
         setError(response.data.message || 'Registration failed');
       }
     } catch (error) {
-      setError('Registration failed. Please try again.');
+      console.log("error", error);
+  
+      setError((error as { response?: { data?: { message?: string } } }).response?.data?.message || 'Registration failed');
     } finally {
       setLoading(false);
     }
@@ -142,7 +156,7 @@ const RegistrationPage: React.FC = () => {
         {error && <ErrorMessage>{error}</ErrorMessage>}
 
         <LoginLink>
-          Already have an account? <Link to="/login">Login here</Link>
+          Already have an account? <Link to="/login"><RegisterHere>Login here</RegisterHere></Link>
         </LoginLink>
       </RegistrationForm>
     </RegistrationPageContainer>

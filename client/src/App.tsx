@@ -22,7 +22,7 @@ const globalStyles = css`
     margin: 0;
     padding: 0;
     font-family: 'Arial', sans-serif;
-    background-color: #1E1E1E;
+    background-color: #5CDB95;
     height: 100%;
   }
 `;
@@ -30,7 +30,7 @@ const globalStyles = css`
 const RootContainer = styled.div`
   display: flex;
   height: 100vh;
-  background-color: #1E1E1E;
+  background-color: #5CDB95;
 `;
 
 const MainContent = styled.div`

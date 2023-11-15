@@ -15,7 +15,7 @@ const StyledForm = styled.form`
 `;
 
 const StyledLabel = styled.label`
-  color: white;
+  color: #05386B;
   margin-bottom: 8px;
   font-size: 1.2em;
 `;
@@ -27,14 +27,14 @@ const StyledInput = styled.input`
   font-size: 1em;
   width: 100%;
   box-sizing: border-box;
-  background-color: #444; /* Set a background color */
-  border: 1px solid #666; /* Add a border */
-  color: white; /* Text color */
+  background-color: white; /* Set a background color */
+  border: 1px solid #05386B; /* Add a border */
+  color: #05386B; /* Text color */
 `;
 
 const StyledButton = styled.button<{ loading?: boolean }>`
-  background-color: #61dafb;
-  color: black;
+  background-color: #05386B;
+  color: white;
   padding: 12px;
   border: none;
   border-radius: 4px;
@@ -42,17 +42,9 @@ const StyledButton = styled.button<{ loading?: boolean }>`
   font-size: 1.2em;
   display: flex;
   align-items: center;
+  justify-content: center;
 `;
 
-const Spinner = styled.div`
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  border-left: 4px solid #4CAF50;
-  border-radius: 50%;
-  width: 16px;
-  height: 16px;
-  animation: spin 0.7s linear infinite;
-  margin-right: 8px;
-`;
 
 const ErrorMessage = styled.div`
   color: #ff0000;
@@ -185,7 +177,7 @@ const NewMusic = () => {
       {error && <ErrorMessage>Error Try again</ErrorMessage>}
       
       <StyledButton type="submit" loading={loading}>
-        {loading && <Spinner />}
+        {loading && "Creating ..."}
         {!loading && 'Create Music'}
       </StyledButton>
     </StyledForm>

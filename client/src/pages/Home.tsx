@@ -30,10 +30,15 @@ interface MusicListItem {
   __v: number;
 }
 
+const MainContainer = styled.div`
+  padding-bottom: 20px;
+`;
+
 const HomeContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-bottom: 20px;
 `;
 
 const Header = styled.div`
@@ -44,14 +49,15 @@ const Header = styled.div`
 `;
 
 const Title = styled.h1`
-  flex-grow: 1;
-  color: #61dafb;
+font-size: 2.5rem;
+  color: white;
 `;
 
 const ShowAllLink = styled(Link)`
-  color: #61dafb;
+  color: white;
   text-decoration: none;
   cursor: pointer;
+  font-size: 1.2rem;
 `;
 
 const CardsContainer = styled.div`
@@ -62,23 +68,30 @@ const CardsContainer = styled.div`
   gap: 20px; /* Added gap between the cards */
 `;
 
+const Error = styled.div`
+  color: #05386B; 
+  padding: 30px;
+  margin: 20px 0; 
+  font-size: 20em;
+`;
+
 const Home: React.FC = () => {
   const { data, loading, error } = useSelector((state: RootState) => state.music);
 
   if (loading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <ClipLoader color="#61dafb" loading={loading} size={150} />
+        <ClipLoader color="#05386B" loading={loading} size={150} />
       </div>
     );
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <Error>Error</Error>;
   }
 
   if (!data) {
-    return <div>No data available</div>;
+    return <Error>No data available</Error>;
   }
 
   const getRandomElements = (array: MusicListItem[], count: number) => {
@@ -92,11 +105,11 @@ const Home: React.FC = () => {
   const randomlyChosenMusic = getRandomElements(remainingMusic, 5);
 
   return (
-    <div>
+    <MainContainer>
       <HomeContainer>
         <Header>
           <Title>Recent Music</Title>
-          <ShowAllLink to="/all-recent-music">Show All</ShowAllLink>
+          <ShowAllLink to="/music">Show All</ShowAllLink>
         </Header>
         <CardsContainer>
           {recentMusic.map((item) => (
@@ -113,7 +126,7 @@ const Home: React.FC = () => {
       <HomeContainer>
         <Header>
           <Title>Randomly Chosen Music</Title>
-          <ShowAllLink to="/all-recent-music">Show All</ShowAllLink>
+          <ShowAllLink to="/music">Show All</ShowAllLink>
         </Header>
         <CardsContainer>
           {randomlyChosenMusic.map((item) => (
@@ -127,7 +140,7 @@ const Home: React.FC = () => {
           ))}
         </CardsContainer>
       </HomeContainer>
-    </div>
+    </MainContainer>
   );
 };
 

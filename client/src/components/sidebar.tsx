@@ -12,7 +12,7 @@ interface SidebarItemContainerProps extends NavLinkProps {
 }
 
 const SidebarContainer = styled.div`
-  background-color: #1a1a1a;
+  background-color: #8EE4AF;
   position: fixed;
   height: 100%;
   top: 0;
@@ -30,7 +30,7 @@ const Content = styled.div`
 const SidebarItemContainer = styled(NavLink)<SidebarItemContainerProps>`
   display: flex;
   align-items: center;
-  background-color: #232323;
+  background-color: #05386B;
   font-size: 16px;
   color: white;
   padding: 10px;
@@ -47,17 +47,17 @@ const SidebarItemContainer = styled(NavLink)<SidebarItemContainerProps>`
   color: white;
 
   &:hover {
-    background-color: #303030;
+    background-color: #5CDB95;
   }
 
   &.active {
-    background-color: #333333;
+    background-color: #379683;
     color: white;
   }
 `;
 
 const UserName = styled.span`
-  color: white;
+  color: #05386B;
   font-size: 14px;
   margin-bottom: 5px;
 `;
@@ -70,7 +70,7 @@ const UserContainer = styled.div`
 `;
 
 const LogoutButton = styled.button`
-  background-color: #232323;
+  background-color: #05386B;
   color: white;
   padding: 8px 12px;
   font-size: 14px;
@@ -92,7 +92,7 @@ const LoginButton = styled.button`
   border-radius: 5px;
   cursor: pointer;
   margin-top: 5px;
-  background-color: #232323;
+  background-color: #05386B;
 
   &:hover {
     background-color: #303030;

@@ -36,15 +36,15 @@ const SearchInput = styled.input`
 const SearchButton = styled.button`
   padding: 10px 16px;
   border-radius: 20px; /* Rounded corners */
-  background-color: #000; /* Button background color */
-  color: #61dafb; /* Button text color */
+  background-color: #05386B; /* Button background color */
+  color: white; /* Button text color */
   border: none;
   cursor: pointer;
   font-size: 16px;
   transition: background-color 0.3s; /* Smooth transition for background color */
 
   &:hover {
-    background-color: #357ae8; /* Change background color on hover */
+    background-color: #379683; /* Change background color on hover */
   }
 `;
 
@@ -60,18 +60,26 @@ const PageNumber = styled.span<{ isActive: boolean }>`
   padding: 8px;
   margin: 0 5px;
   cursor: pointer;
-  color: ${({ isActive }) => (isActive ? 'black' : 'white')};
-  background-color: ${({ isActive }) => (isActive ? 'white' : 'transparent')};
+  color: ${({ isActive }) => (isActive ? '#EDF5E1' : 'white')};
+  background-color: ${({ isActive }) => (isActive ? '#05386B' : 'transparent')};
   border-radius: 4px;
 
   &:hover {
-    background-color: ${({ isActive }) => (isActive ? '#61dafb' : '#ddd')};
+    background-color: ${({ isActive }) => (isActive ? '#8EE4AF' : '#379683')};
   }
 `;
 
 const PageNumberContainer = styled.div`
   display: flex;
   margin-top: 20px;
+  margin-bottom: 20px;
+`;
+
+const Error = styled.div`
+  color: #05386B; 
+  padding: 30px;
+  margin: 20px 0; 
+  font-size: 20em;
 `;
 
 const MusicPage: React.FC = () => {
@@ -123,13 +131,13 @@ const MusicPage: React.FC = () => {
   if (loading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <ClipLoader color="#61dafb" loading={loading} size={150} />
+        <ClipLoader color="#05386B" loading={loading} size={150} />
       </div>
     );
   }
 
   if (error) {
-    return <div>Error</div>;
+    return <Error>Error</Error>;
   }
 
   return (
@@ -146,7 +154,7 @@ const MusicPage: React.FC = () => {
       </SearchContainer>
       <CardsContainer>
         {searchResults.length === 0 ? (
-          <p>No results found</p>
+          <Error>No Data</Error>
         ) : (
           searchResults.slice(
             (currentPage - 1) * itemsPerPage,

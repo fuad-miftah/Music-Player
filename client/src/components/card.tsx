@@ -10,7 +10,7 @@ type CardProps = {
 };
 
 const CardContainer = styled(Link)`
-  background-color: #000;
+  background-color: #05386B;
   color: #fff;
   border-radius: 10px;
   overflow: hidden;
@@ -37,7 +37,7 @@ const Title = styled.h3`
 
 const ArtistName = styled.p`
   font-size: 1rem;
-  opacity: 0.8;
+  color: #EDF5E1;
 `;
 
 const Card: React.FC<CardProps> = ({ id, imageUrl, title, artist }) => (

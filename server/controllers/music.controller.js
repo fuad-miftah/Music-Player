@@ -10,7 +10,6 @@ import { createError } from '../utils/error.js';
 const router = express.Router();
 router.use(fileUpload());
 
-// Create Music
 export const createMusic = async (req, res, next) => {
     try {
         const { title, artist, album, genre } = req.body;
@@ -20,7 +19,6 @@ export const createMusic = async (req, res, next) => {
             return res.status(400).json(createError(400, 'No files were uploaded.'));
         }
 
-        console.log("req.files", req.files);
         const { audioFile, imageFile } = req.files;
 
         const audioResult = await cloudinary.uploader.upload(audioFile.tempFilePath, {
@@ -70,9 +68,9 @@ export const updateMusic = async (req, res, next) => {
         if (req.user.role === 'admin' || (existingMusic.user && existingMusic.user.toString() === req.user.id.toString())) {
             let updateFields = {};
             if (req.files) {
-                // Files were uploaded
+
                 if (req.files.audioFile) {
-                    // Handle audio file
+
                     await cloudinary.uploader.destroy(existingMusic.audio.public_id, { resource_type: 'video' });
                     const audioResult = await cloudinary.uploader.upload(req.files.audioFile.tempFilePath, {
                         resource_type: 'auto',
@@ -83,7 +81,7 @@ export const updateMusic = async (req, res, next) => {
                 }
 
                 if (req.files.imageFile) {
-                    // Handle image file
+
                     await cloudinary.uploader.destroy(existingMusic.coverImg.public_id);
                     const imageResult = await cloudinary.uploader.upload(req.files.imageFile.tempFilePath, {
                         resource_type: 'image',
@@ -94,7 +92,6 @@ export const updateMusic = async (req, res, next) => {
                 }
             }
 
-            // Include other non-file fields if they exist
             if (title) updateFields.title = title;
             if (artist) updateFields.artist = artist;
             if (album) updateFields.album = album;
@@ -129,14 +126,11 @@ export const deleteMusic = async (req, res, next) => {
             return res.status(404).json(createError(404, 'Music not found.'));
         }
 
-            // Delete images and audio from Cloudinary
             await cloudinary.uploader.destroy(existingMusic.coverImg.public_id);
             await cloudinary.uploader.destroy(existingMusic.audio.public_id, { resource_type: 'video' });
 
-            // Remove the reference from the User's music array
             await User.findByIdAndUpdate(userId, { $pull: { music: musicId } });
 
-            // Delete the Music document
             await Music.findByIdAndDelete(musicId);
 
             res.status(204).end();
@@ -334,6 +328,4 @@ export const getAllClientMusicWithStats = async (req, res, next) => {
 };
 
 
-
-// Export the router
 export default router;
