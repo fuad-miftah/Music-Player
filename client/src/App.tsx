@@ -57,7 +57,6 @@ const App: React.FC = () => {
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
     if (storedUser) {
-      console.log("verify user");
       
       dispatch(verifyUserStart({ _id}));
     }

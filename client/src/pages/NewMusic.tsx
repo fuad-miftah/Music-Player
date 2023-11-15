@@ -182,7 +182,7 @@ const NewMusic = () => {
         />
       </StyledLabel>
       
-      {error && <ErrorMessage>{error}</ErrorMessage>}
+      {error && <ErrorMessage>Error Try again</ErrorMessage>}
       
       <StyledButton type="submit" loading={loading}>
         {loading && <Spinner />}

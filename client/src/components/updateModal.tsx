@@ -85,7 +85,7 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onRequestClose, music
     if (musicId) {
       const fetchMusicData = async () => {
         try {
-          const response = await axios.get(`http://localhost:5555/api/music/${id}/${musicId}`, { withCredentials: true });
+          const response = await axios.get(`http://localhost:5555/api/music/single/${musicId}`, { withCredentials: true });
           const musicData = response.data.data;
           setUpdatedMusicData({
             title: musicData.title,
@@ -111,9 +111,11 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onRequestClose, music
         formData.append('artist', updatedMusicData.artist || '');
         formData.append('album', updatedMusicData.album || '');
         formData.append('genre', updatedMusicData.genre || '');
-        formData.append('coverImage', updatedMusicData.imageFile || '');
+        formData.append('imageFile', updatedMusicData.imageFile || '');
         formData.append('audioFile', updatedMusicData.audioFile || '');
         if(id){
+          console.log("formData",formData);
+          
         dispatch(updateMusicStart({ id, musicId, formData }));
         onRequestClose();
         navigate(`/mymusic/${id}`);

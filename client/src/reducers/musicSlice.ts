@@ -84,7 +84,7 @@ const musicSlice = createSlice({
     createMusicStart: (state, action: PayloadAction<{ musicData: MusicFormData; userId: string }>) => {
       state.loading = true;
       state.error = null;
-      console.log(action);
+      console.log(action.payload);
       
     },
     createMusicSuccess: (state, action) => {
@@ -122,7 +122,7 @@ const musicSlice = createSlice({
     deleteMusicStart: (state, action: PayloadAction<{ id: string; musicId: string }>) => {
       state.loading = true;
       state.error = null;
-      console.log(action);
+      console.log(action.payload);
       
     },
     deleteMusicSuccess: (state, action: PayloadAction<string>) => {

@@ -69,7 +69,6 @@ export const updateMusic = async (req, res, next) => {
 
         if (req.user.role === 'admin' || (existingMusic.user && existingMusic.user.toString() === req.user.id.toString())) {
             let updateFields = {};
-
             if (req.files) {
                 // Files were uploaded
                 if (req.files.audioFile) {
@@ -122,6 +121,7 @@ export const updateMusic = async (req, res, next) => {
 export const deleteMusic = async (req, res, next) => {
     try {
         const musicId = req.params.musicId;
+        const userId = req.params.userId;
 
         const existingMusic = await Music.findById(musicId);
 
@@ -134,7 +134,7 @@ export const deleteMusic = async (req, res, next) => {
             await cloudinary.uploader.destroy(existingMusic.audio.public_id, { resource_type: 'video' });
 
             // Remove the reference from the User's music array
-            await User.findByIdAndUpdate(req.user._id, { $pull: { music: musicId } });
+            await User.findByIdAndUpdate(userId, { $pull: { music: musicId } });
 
             // Delete the Music document
             await Music.findByIdAndDelete(musicId);

@@ -171,13 +171,15 @@ const MyMusic: React.FC = () => {
           dispatch(deleteMusicStart({ id, musicId }));
           resolve();
         });
-
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        await new Promise(resolve => setTimeout(resolve, 4000));
+        
         const response = await axios.get(`http://localhost:5555/api/music/user/${id}`, {
           withCredentials: true
         });
     
         setMusicList(response.data.data);
+
       }
       } catch (error) {
         console.error('Error deleting music:', error);

@@ -32,12 +32,10 @@ router.put('/:userId/:musicId', verifyClient, updateMusic);
 router.delete('/:userId/:musicId', verifyClient, deleteMusic);
 
 // Get Music by ID
-router.get('/:userId/:musicId', getMusic);
+router.get('/single/:musicId', getMusic);
 
 // Get All Music
 router.get('/all', getAllMusic);
-
-
 
 // Get All Music with stats
 router.get('/allwithstat', getAllMusicWithStats);

@@ -41,7 +41,7 @@ export const authSlice = createSlice({
   reducers: {
     loginStart: (state, action: PayloadAction<{ username: string; password: string }>) => {
       state.error = null;
-      console.log(action);
+      console.log(action.payload);
     },
     loginSuccess: (state, action: PayloadAction<LoginResponseData>) => {
       state.isAuthenticated = true;
@@ -62,7 +62,7 @@ export const authSlice = createSlice({
       localStorage.removeItem('user');
     },
     verifyUserStart: (state, action: PayloadAction<{ _id: string; }>) => {
-      console.log(action);
+      console.log(action.payload);
       state.error = null;
     },
     verifyUserSuccess: (state) => {
