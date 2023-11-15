@@ -6,6 +6,30 @@ import styled from "@emotion/styled"
 import { Link } from 'react-router-dom';
 import { ClipLoader } from 'react-spinners';
 
+interface CoverImage {
+  public_id: string;
+  url: string;
+}
+
+interface Audio {
+  public_id: string;
+  url: string;
+}
+
+interface MusicListItem {
+  coverImg: CoverImage;
+  audio: Audio;
+  _id: string;
+  title: string;
+  artist: string;
+  album: string;
+  genre: string;
+  user: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
 const HomeContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -17,7 +41,6 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: baseline;
   width: 100%;
-  
 `;
 
 const Title = styled.h1`
@@ -40,7 +63,6 @@ const CardsContainer = styled.div`
 `;
 
 const Home: React.FC = () => {
-
   const { data, loading, error } = useSelector((state: RootState) => state.music);
 
   if (loading) {
@@ -59,6 +81,15 @@ const Home: React.FC = () => {
     return <div>No data available</div>;
   }
 
+  const getRandomElements = (array: MusicListItem[], count: number) => {
+    const shuffled = array.sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
+  };
+
+  const recentMusic = data.musicList.slice(0, 5);
+
+  const remainingMusic = data.musicList.slice(5);
+  const randomlyChosenMusic = getRandomElements(remainingMusic, 5);
 
   return (
     <div>
@@ -68,7 +99,7 @@ const Home: React.FC = () => {
           <ShowAllLink to="/all-recent-music">Show All</ShowAllLink>
         </Header>
         <CardsContainer>
-          {data.musicList.slice(0, 5).map((item) => (
+          {recentMusic.map((item) => (
             <Card
               key={item._id}
               id={String(item._id)}
@@ -81,11 +112,11 @@ const Home: React.FC = () => {
       </HomeContainer>
       <HomeContainer>
         <Header>
-          <Title>Recent Music</Title>
+          <Title>Randomly Chosen Music</Title>
           <ShowAllLink to="/all-recent-music">Show All</ShowAllLink>
         </Header>
         <CardsContainer>
-          {data.musicList.slice(0, 5).map((item) => (
+          {randomlyChosenMusic.map((item) => (
             <Card
               key={item._id}
               id={String(item._id)}
@@ -101,5 +132,3 @@ const Home: React.FC = () => {
 };
 
 export default Home;
-
-
