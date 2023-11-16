@@ -183,7 +183,7 @@ const MyMusic: React.FC = () => {
         
         await new Promise(resolve => setTimeout(resolve, 4000));
         
-        const response = await axios.get(`http://localhost:5555/api/music/user/${id}`, {
+        const response = await axios.get(`https://music-player-s6gw.onrender.com/api/music/user/${id}`, {
           withCredentials: true
         });
     

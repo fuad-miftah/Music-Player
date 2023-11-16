@@ -29,7 +29,7 @@ interface MusicFormData {
 
 function* fetchDataSaga(): Generator<any, void, any> {
   try {
-    const response = yield call(axios.get, 'http://localhost:5555/api/music/allwithstat');
+    const response = yield call(axios.get, 'https://music-player-s6gw.onrender.com/api/music/allwithstat');
     yield put(fetchDataSuccess(response.data.data));
   } catch (error) {
     yield put(fetchDataFailure(error));
@@ -39,7 +39,7 @@ function* fetchDataSaga(): Generator<any, void, any> {
 function* createMusicSaga(action: PayloadAction<{ musicData: MusicFormData; userId: string }>): Generator<any, void, any> {
   try {
     const { musicData, userId } = action.payload;
-    const response = yield call(axios.post, `http://localhost:5555/api/music/${userId}`, musicData, {
+    const response = yield call(axios.post, `https://music-player-s6gw.onrender.com/api/music/${userId}`, musicData, {
       withCredentials: true,
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -55,7 +55,7 @@ function* createMusicSaga(action: PayloadAction<{ musicData: MusicFormData; user
 function* updateMusicSaga(action: PayloadAction<{ id: string; musicId: string; formData: MusicFormData }>): Generator<any, void, any> {
   try {
     const { id, musicId, formData } = action.payload;
-    const response = yield call(axios.put, `http://localhost:5555/api/music/${id}/${musicId}`, formData,{ withCredentials: true });
+    const response = yield call(axios.put, `https://music-player-s6gw.onrender.com/api/music/${id}/${musicId}`, formData,{ withCredentials: true });
     
     yield put(updateMusicSuccess(response.data.data));
   } catch (error) {
@@ -66,7 +66,7 @@ function* updateMusicSaga(action: PayloadAction<{ id: string; musicId: string; f
 function* deleteMusicSaga(action: PayloadAction<{ id: string; musicId: string }>): Generator<any, void, any> {
   try {
     const { id, musicId } = action.payload;
-    yield call(axios.delete, `http://localhost:5555/api/music/${id}/${musicId}`, { withCredentials: true });
+    yield call(axios.delete, `https://music-player-s6gw.onrender.com/api/music/${id}/${musicId}`, { withCredentials: true });
 
     yield put(deleteMusicSuccess(musicId));
   } catch (error) {

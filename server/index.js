@@ -14,6 +14,14 @@ const port = process.env.PORT || 8000
 
 connectToDatabase();
 
+const corsConfig = {
+  origin: true,
+  credentials: true,
+};
+
+app.use(cors(corsConfig));
+app.options('*', cors(corsConfig));
+
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -25,13 +33,6 @@ app.use(fileUpload({
   tempFileDir: '/tmp/',
 }));
 
-const corsConfig = {
-  origin: true,
-  credentials: true,
-};
-
-app.use(cors(corsConfig));
-app.options('*', cors(corsConfig));
 
 app.use(cookieParser())
 app.use(express.json());
