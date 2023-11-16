@@ -94,7 +94,7 @@ const RegistrationPage: React.FC = () => {
     try {
       setLoading(true);
 
-      const response = await axios.post('http://localhost:5555/api/auth/register', {
+      const response = await axios.post('https://music-player-s6gw.onrender.com/api/auth/register', {
         username,
         password,
         email,

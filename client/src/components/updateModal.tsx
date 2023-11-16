@@ -85,7 +85,7 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onRequestClose, music
     if (musicId) {
       const fetchMusicData = async () => {
         try {
-          const response = await axios.get(`http://localhost:5555/api/music/single/${musicId}`, { withCredentials: true });
+          const response = await axios.get(`https://music-player-s6gw.onrender.com/api/music/single/${musicId}`, { withCredentials: true });
           const musicData = response.data.data;
           setUpdatedMusicData({
             title: musicData.title,

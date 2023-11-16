@@ -42,7 +42,7 @@ interface CustomError {
 
 function* loginSaga(action: PayloadAction<YourLoginPayloadType>): Generator<any, void, LoginResponseData> {
   try {
-    const response: LoginResponseData = yield call(axios.post, 'http://localhost:5555/api/auth/login', action.payload);
+    const response: LoginResponseData = yield call(axios.post, 'https://music-player-s6gw.onrender.com/api/auth/login', action.payload);
     yield put(loginSuccess(response.data));
 
     const { access_token } = response.data.data;
@@ -62,7 +62,7 @@ function isCustomError(obj: any): obj is CustomError {
 
 function* logoutSaga() {
   try {
-    yield call(axios.post, 'http://localhost:5555/api/auth/logout', { withCredentials: true });
+    yield call(axios.post, 'https://music-player-s6gw.onrender.com/api/auth/logout', { withCredentials: true });
     yield put(logout());
 
     document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
@@ -77,7 +77,7 @@ function* logoutSaga() {
 
 function* verifyUserSaga(action) {
   try {
-    const response = yield call(axios.get, `http://localhost:5555/api/auth/user/${action.payload._id}`, {
+    const response = yield call(axios.get, `https://music-player-s6gw.onrender.com/api/auth/user/${action.payload._id}`, {
       withCredentials: true,
     });
 
