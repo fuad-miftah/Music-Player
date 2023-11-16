@@ -15,6 +15,7 @@ import MyMusic from './pages/MyMusic';
 import RegistrationPage from './pages/Register';
 import { fetchDataStart } from './reducers/musicSlice';
 import { verifyUserStart } from './reducers/authSlice';
+import axios from 'axios';
 
 const globalStyles = css`
   /* Add your global styles here */
@@ -48,6 +49,7 @@ const SidebarLayout = () => (
 );
 
 const App: React.FC = () => {
+  axios.defaults.withCredentials = true;
   const dispatch = useDispatch();
 
   const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
