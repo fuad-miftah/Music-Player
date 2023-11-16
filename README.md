@@ -1,4 +1,12 @@
-# Music Player App
+<h2 align="center">
+  HarmoniSync Music Player<br/>
+  <a href="https://6555cede0030205533b7930c--preeminent-chaja-5f2e87.netlify.app/" target="_blank">Demo</a>
+</h2>
+
+<br/>![HarmoniSync](https://github.com/fuad-miftah/Music-Player/assets/85777124/a0134f8e-4291-45ad-a2ba-d5dfb30f06ff)
+
+
+# HarmoniSync Music Player App
 
 This is a full-stack music player application built with Vite, React, TypeScript for the frontend, and Node.js for the backend. 
 Users can create, update, and delete music, as well as view personalized statistics once logged in. 
@@ -10,6 +18,7 @@ Even users not logged in can listen to music, see music details, and view overal
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
+- [Documentaion](#documentation)
 - [Usage](#usage)
 
 ## Features
@@ -61,7 +70,13 @@ cd ../server
 npm install
 ```
 
-##Usage
+## Documentation
+
+Here is the postman documentation link
+
+https://documenter.getpostman.com/view/29317855/2s9YXo2fBD
+
+## Usage
 
 1. Start the backend server:
 
