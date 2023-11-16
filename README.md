@@ -45,7 +45,7 @@ Make sure you have the following installed:
 1. Clone the repository:
 
 ```
-git clone [https://github.com/your-username/music-player-app.git](https://github.com/fuad-miftah/Music-Player.git)
+git clone https://github.com/fuad-miftah/Music-Player.git
 ```
 
 2. Change into the project directory:
