@@ -99,9 +99,9 @@ const Home: React.FC = () => {
     return shuffled.slice(0, count);
   };
 
-  const recentMusic = data.musicList.slice(0, 5);
+  const recentMusic = data.musicList.slice(-5);
 
-  const remainingMusic = data.musicList.slice(5);
+  const remainingMusic = data.musicList.slice();
   const randomlyChosenMusic = getRandomElements(remainingMusic, 5);
 
   return (

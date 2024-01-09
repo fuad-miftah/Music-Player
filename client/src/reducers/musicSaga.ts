@@ -16,9 +16,8 @@ import {
   deleteMusicFailure,
 } from './musicSlice';
 
-
 interface MusicFormData {
-  _id: string; 
+  _id: string;
   title: string;
   artist: string;
   album: string;
@@ -27,12 +26,13 @@ interface MusicFormData {
   audioFile: File;
 }
 
+
 function* fetchDataSaga(): Generator<any, void, any> {
   try {
     const response = yield call(axios.get, 'https://music-player-s6gw.onrender.com/api/music/allwithstat');
     yield put(fetchDataSuccess(response.data.data));
   } catch (error) {
-    yield put(fetchDataFailure(error));
+    yield put(fetchDataFailure(String(error)));
   }
 }
 
@@ -45,21 +45,21 @@ function* createMusicSaga(action: PayloadAction<{ musicData: MusicFormData; user
         'Content-Type': 'multipart/form-data',
       },
     });
-    
+
     yield put(createMusicSuccess(response.data));
   } catch (error) {
-    yield put(createMusicFailure(error));
+    yield put(createMusicFailure(String(error)));
   }
 }
 
 function* updateMusicSaga(action: PayloadAction<{ id: string; musicId: string; formData: MusicFormData }>): Generator<any, void, any> {
   try {
     const { id, musicId, formData } = action.payload;
-    const response = yield call(axios.put, `https://music-player-s6gw.onrender.com/api/music/${id}/${musicId}`, formData,{ withCredentials: true });
-    
+    const response = yield call(axios.put, `https://music-player-s6gw.onrender.com/api/music/${id}/${musicId}`, formData, { withCredentials: true });
+
     yield put(updateMusicSuccess(response.data.data));
   } catch (error) {
-    yield put(updateMusicFailure(error));
+    yield put(updateMusicFailure(String(error)));
   }
 }
 
@@ -70,7 +70,7 @@ function* deleteMusicSaga(action: PayloadAction<{ id: string; musicId: string }>
 
     yield put(deleteMusicSuccess(musicId));
   } catch (error) {
-    yield put(deleteMusicFailure(error));
+    yield put(deleteMusicFailure(String(error)));
   }
 }
 
@@ -80,4 +80,3 @@ export function* watchMusic() {
   yield takeEvery(updateMusicStart.type, updateMusicSaga);
   yield takeEvery(deleteMusicStart.type, deleteMusicSaga);
 }
-

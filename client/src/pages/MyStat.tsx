@@ -117,8 +117,8 @@ const MyStat: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`https://music-player-s6gw.onrender.com/api/music/clientwithstat/${id}`, { withCredentials: true});
-        
+        const response = await axios.get(`https://music-player-s6gw.onrender.com/api/music/clientwithstat/${id}`, { withCredentials: true });
+
         setMusicData(response.data.data);
       } catch (error) {
         console.error('Error fetching music data:', error);
@@ -196,7 +196,7 @@ const MyStat: React.FC = () => {
               outerRadius={80}
               label
             >
-              {musicData.artistStats.map((entry, index) => (
+              {musicData.artistStats.map((_, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
@@ -219,7 +219,7 @@ const MyStat: React.FC = () => {
               outerRadius={80}
               label
             >
-              {musicData.albumStats.map((entry, index) => (
+              {musicData.albumStats.map((_, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>

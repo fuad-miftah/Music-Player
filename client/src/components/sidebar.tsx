@@ -24,7 +24,7 @@ const SidebarContainer = styled.div`
 `;
 
 const Content = styled.div`
-  margin-top: 60px;
+  margin-top: 20px;
 `;
 
 const SidebarItemContainer = styled(NavLink)<SidebarItemContainerProps>`
@@ -99,6 +99,12 @@ const LoginButton = styled.button`
   }
 `;
 
+const Title = styled.h1`
+font-size: 1.2rem;
+  color: white;
+  margin-left: 15px;
+`;
+
 const SidebarItem = ({ Icon, Text, to }: { Icon: React.ElementType; Text: string; to: string }) => (
   <SidebarItemContainer to={to} activeClassName="active">
     <Icon />
@@ -119,6 +125,7 @@ const Sidebar = () => {
   return (
     <SidebarContainer>
       <Content>
+        <Title><FaMusic /> HarmoniSync</Title>
         <SidebarItem Icon={FaHome} Text="Home" to="/" />
         <SidebarItem Icon={FaChartBar} Text="Statistics" to="/statistics" />
         <SidebarItem Icon={FaMusic} Text="Music" to="/music" />

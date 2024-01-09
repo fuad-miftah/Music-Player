@@ -42,7 +42,9 @@ interface CustomError {
 
 function* loginSaga(action: PayloadAction<YourLoginPayloadType>): Generator<any, void, LoginResponseData> {
   try {
+    console.log('Saga is running...');
     const response: LoginResponseData = yield call(axios.post, 'https://music-player-s6gw.onrender.com/api/auth/login', action.payload);
+    console.log('Saga completed successfully:', response);
     yield put(loginSuccess(response.data));
 
     const { access_token } = response.data.data;
@@ -75,7 +77,7 @@ function* logoutSaga() {
   }
 }
 
-function* verifyUserSaga(action) {
+function* verifyUserSaga(action: PayloadAction<{ _id: string }>): Generator<any, void, any> {
   try {
     const response = yield call(axios.get, `https://music-player-s6gw.onrender.com/api/auth/user/${action.payload._id}`, {
       withCredentials: true,
