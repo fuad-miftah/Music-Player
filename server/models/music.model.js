@@ -35,6 +35,14 @@ const MusicSchema = new mongoose.Schema({
         required: true,
     }
   },
+  rating: {
+    type: Number,
+    default: 0,
+  },
+  ratingCount: {
+    type: Number,
+    default: 0,
+  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

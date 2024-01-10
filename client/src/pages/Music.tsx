@@ -166,6 +166,7 @@ const MusicPage: React.FC = () => {
               imageUrl={item.coverImg.url}
               title={item.title}
               artist={item.artist}
+              rating={item.rating}
             />
           ))
         )}

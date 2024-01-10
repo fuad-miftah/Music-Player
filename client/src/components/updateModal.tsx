@@ -5,6 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useDispatch } from 'react-redux';
 import { updateMusicStart } from '../reducers/musicSlice';
+import { API_BASE_URL } from '../api/baseApi';
 
 interface UpdateModalProps {
   isOpen: boolean;
@@ -85,7 +86,7 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onRequestClose, music
     if (musicId) {
       const fetchMusicData = async () => {
         try {
-          const response = await axios.get(`https://music-player-s6gw.onrender.com/api/music/single/${musicId}`, { withCredentials: true });
+          const response = await axios.get(`${API_BASE_URL}/music/single/${musicId}`, { withCredentials: true });
           const musicData = response.data.data;
           setUpdatedMusicData({
             title: musicData.title,

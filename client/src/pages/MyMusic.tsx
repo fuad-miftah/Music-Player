@@ -6,6 +6,7 @@ import UpdateModal from '../components/updateModal';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { useDispatch } from 'react-redux';
 import { deleteMusicStart } from '../reducers/musicSlice';
+import { API_BASE_URL } from '../api/baseApi';
 
 interface Music {
   _id: string;
@@ -129,7 +130,7 @@ const MyMusic: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`https://music-player-s6gw.onrender.com/api/music/user/${id}`, { withCredentials: true });
+        const response = await axios.get(`${API_BASE_URL}/music/user/${id}`, { withCredentials: true });
         
         setMusicList(response.data.data);
       } catch (error) {
@@ -147,7 +148,7 @@ const MyMusic: React.FC = () => {
   };
 
   const closeUpdateModal = () => {
-    axios.get(`https://music-player-s6gw.onrender.com/api/music/user/${id}`, { withCredentials: true })
+    axios.get(`${API_BASE_URL}/music/user/${id}`, { withCredentials: true })
     .then(response => {
       setMusicList(response.data.data);
     })
@@ -183,7 +184,7 @@ const MyMusic: React.FC = () => {
         
         await new Promise(resolve => setTimeout(resolve, 4000));
         
-        const response = await axios.get(`https://music-player-s6gw.onrender.com/api/music/user/${id}`, {
+        const response = await axios.get(`${API_BASE_URL}/music/user/${id}`, {
           withCredentials: true
         });
     

@@ -80,7 +80,7 @@ export const login = async (req, res, next) => {
       process.env.JWT  // Use the JWT secret key from environment variables 
     );
 
-    const { password, role, ...otherDetails } = user._doc;
+    const { password, ...otherDetails } = user._doc;
     res
       .cookie("access_token", access_token, {
         httpOnly: true,
@@ -90,7 +90,7 @@ export const login = async (req, res, next) => {
         expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
       })
       .status(200)
-      .json(createSuccess("Login successful.", { details: { ...otherDetails }, role, access_token }));
+      .json(createSuccess("Login successful.", { details: { ...otherDetails }, access_token }));
   } catch (err) {
     next(err);
   }

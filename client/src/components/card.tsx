@@ -7,6 +7,7 @@ type CardProps = {
   imageUrl: string;
   title: string;
   artist: string;
+  rating: number;
 };
 
 const CardContainer = styled(Link)`
@@ -40,12 +41,27 @@ const ArtistName = styled.p`
   color: #EDF5E1;
 `;
 
-const Card: React.FC<CardProps> = ({ id, imageUrl, title, artist }) => (
+const ArtistRatingContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
+`;
+
+const Rating = styled.div`
+  font-size: 1rem;
+  color: #FFD700; /* Set the color to gold or adjust as needed */
+`;
+
+const Card: React.FC<CardProps> = ({ id, imageUrl, title, artist, rating }) => (
   <CardContainer to={`/music/${id}`}>
     <CardImage src={imageUrl} alt="Album Art" />
     <CardContent>
       <Title>{title}</Title>
+      <ArtistRatingContainer>
       <ArtistName>{artist}</ArtistName>
+      <Rating>{(rating).toFixed(1)}</Rating>
+      </ArtistRatingContainer>
     </CardContent>
   </CardContainer>
 );

@@ -1,7 +1,8 @@
 import express from "express"
 import dotenv from "dotenv";
 import authRoute from "./routes/auth.routes.js";
-import musicRoute from "./routes/music.routes.js"
+import musicRoute from "./routes/music.routes.js";
+import userRoute from "./routes/usser.routes.js"
 import cors from "cors"
 import connectToDatabase from "./config/db.js";
 import cookieParser from "cookie-parser";
@@ -39,6 +40,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRoute);
 app.use("/api/music", musicRoute);
+app.use("/api/users", userRoute);
 
 
 app.use((err, req, res, next) => {

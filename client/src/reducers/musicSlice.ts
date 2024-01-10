@@ -19,6 +19,8 @@ interface MusicListItem {
   album: string;
   genre: string;
   user: string;
+  rating: number;
+  ratingCount: number;
   createdAt: string;
   updatedAt: string;
   __v: number;

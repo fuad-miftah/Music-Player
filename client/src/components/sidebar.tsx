@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { FaHome, FaChartBar, FaMusic } from 'react-icons/fa';
+import { FaHome, FaChartBar, FaMusic, FaUser } from 'react-icons/fa';
 import { MdFiberNew } from 'react-icons/md';
 import styled from '@emotion/styled';
 import { NavLink, NavLinkProps } from 'react-router-dom';
@@ -117,6 +117,8 @@ const Sidebar = () => {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
   const userName = storedUser?.username || '';
+  const userRole = storedUser?.role || '';
+
 
   const handleLogout = () => {
     dispatch(logout());
@@ -126,12 +128,14 @@ const Sidebar = () => {
     <SidebarContainer>
       <Content>
         <Title><FaMusic /> HarmoniSync</Title>
-        <SidebarItem Icon={FaHome} Text="Home" to="/" />
-        <SidebarItem Icon={FaChartBar} Text="Statistics" to="/statistics" />
-        <SidebarItem Icon={FaMusic} Text="Music" to="/music" />
-        {isAuthenticated && <SidebarItem Icon={FaChartBar} Text="My Stat" to={`/mystat/${storedUser?._id}`} />}
-        {isAuthenticated && <SidebarItem Icon={FaMusic} Text="My Music" to={`/mymusic/${storedUser?._id}`} />}
-        {isAuthenticated && <SidebarItem Icon={MdFiberNew} Text="Create Music" to={`/newmusic/${storedUser?._id}`} />}
+        { isAuthenticated && <SidebarItem Icon={FaHome} Text="Home" to="/" /> }
+        { isAuthenticated && userRole === "Admin" && <SidebarItem Icon={FaChartBar} Text="Statistics" to="/statistics" /> }
+        { isAuthenticated && <SidebarItem Icon={FaMusic} Text="Music" to="/music" /> }
+        { isAuthenticated && <SidebarItem Icon={FaUser} Text="Update Profile" to={`/updateprofile/${storedUser?._id}`} /> }
+        {isAuthenticated && userRole === "Admin" && <SidebarItem Icon={FaChartBar} Text="My Stat" to={`/mystat/${storedUser?._id}`} />}
+        {isAuthenticated && userRole === "Admin" && <SidebarItem Icon={FaMusic} Text="My Music" to={`/mymusic/${storedUser?._id}`} />}
+        {isAuthenticated && userRole === "Admin" && <SidebarItem Icon={MdFiberNew} Text="Create Music" to={`/newmusic/${storedUser?._id}`} />}
+        {isAuthenticated && userRole === "Admin" && <SidebarItem Icon={MdFiberNew} Text="User Managment" to="/usermanagment" />}
       </Content>
 
       {isAuthenticated ? (

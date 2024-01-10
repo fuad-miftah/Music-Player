@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 
 import styled from '@emotion/styled';
+import { API_BASE_URL } from '../api/baseApi';
 
 const RegistrationPageContainer = styled.div`
   display: flex;
@@ -94,7 +95,7 @@ const RegistrationPage: React.FC = () => {
     try {
       setLoading(true);
 
-      const response = await axios.post('https://music-player-s6gw.onrender.com/api/auth/register', {
+      const response = await axios.post(`${API_BASE_URL}/auth/register`, {
         username,
         password,
         email,

@@ -126,15 +126,15 @@ export const deleteMusic = async (req, res, next) => {
             return res.status(404).json(createError(404, 'Music not found.'));
         }
 
-            await cloudinary.uploader.destroy(existingMusic.coverImg.public_id);
-            await cloudinary.uploader.destroy(existingMusic.audio.public_id, { resource_type: 'video' });
+        await cloudinary.uploader.destroy(existingMusic.coverImg.public_id);
+        await cloudinary.uploader.destroy(existingMusic.audio.public_id, { resource_type: 'video' });
 
-            await User.findByIdAndUpdate(userId, { $pull: { music: musicId } });
+        await User.findByIdAndUpdate(userId, { $pull: { music: musicId } });
 
-            await Music.findByIdAndDelete(musicId);
+        await Music.findByIdAndDelete(musicId);
 
-            res.status(204).end();
-        
+        res.status(204).end();
+
     } catch (error) {
         console.error('Error during music deletion:', error);
         res.status(500).json(createError(500, 'Internal server error during music deletion.'));
@@ -290,7 +290,7 @@ export const getAllClientMusicWithStats = async (req, res, next) => {
                     },
                 },
             ]);
-            
+
             // Get songs in each album for the client's music
             const albumStats = await Music.aggregate([
                 {
@@ -326,6 +326,53 @@ export const getAllClientMusicWithStats = async (req, res, next) => {
         res.status(500).json(createError(500, 'Internal server error during fetching client music with stats.'));
     }
 };
+
+// Update Rating for Music
+export const updateRating = async (req, res, next) => {
+    try {
+        const musicId = req.params.musicId;
+        const { rating: incomingRating } = req.body;
+        console.log('incomingRating', incomingRating);
+
+        const existingMusic = await Music.findById(musicId);
+
+        if (!existingMusic) {
+            return res.status(404).json(createError(404, 'Music not found.'));
+        }
+
+        // Calculate new average rating and update rating count
+        const currentRatingSum = existingMusic.rating * existingMusic.ratingCount;
+        const newRatingCount = existingMusic.ratingCount + 1;
+        const newAverageRating =
+            (currentRatingSum + incomingRating) / newRatingCount;
+
+        // Update music document with new rating and rating count
+        const updatedMusic = await Music.findByIdAndUpdate(
+            musicId,
+            {
+                $set: {
+                    rating: newAverageRating,
+                    ratingCount: newRatingCount,
+                },
+            },
+            { new: true }
+        );
+
+        res.status(200).json(
+            createSuccess('Rating updated successfully', {
+                music: updatedMusic,
+                newAverageRating,
+                newRatingCount,
+            })
+        );
+    } catch (error) {
+        console.error('Error during rating update:', error);
+        res.status(500).json(
+            createError(500, 'Internal server error during rating update.')
+        );
+    }
+};
+
 
 
 export default router;

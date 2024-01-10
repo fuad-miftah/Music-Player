@@ -27,12 +27,14 @@ interface AuthState {
   isAuthenticated: boolean;
   user: UserDetails | null;
   error: string | null;
+  loading: boolean;
 }
 
 const initialState: AuthState = {
   isAuthenticated: false,
   user: null,
   error: null,
+  loading: false,
 };
 
 export const authSlice = createSlice({
@@ -41,6 +43,7 @@ export const authSlice = createSlice({
   reducers: {
     loginStart: (state, action: PayloadAction<{ username: string; password: string }>) => {
       state.error = null;
+      state.loading = true;
       console.log(action.payload);
     },
     loginSuccess: (state, action: PayloadAction<LoginResponseData>) => {
@@ -50,10 +53,12 @@ export const authSlice = createSlice({
 
       const { access_token } = action.payload.data;
       document.cookie = `access_token=${access_token}; path=/`;
+      state.loading = false;
     },
     loginFailure: (state, action: PayloadAction<string>) => {
       state.isAuthenticated = false;
       state.error = action.payload;
+      state.loading = false;
     },
     logout: (state) => {
       state.isAuthenticated = false;
