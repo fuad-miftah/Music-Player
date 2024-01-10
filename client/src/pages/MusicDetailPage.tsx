@@ -7,6 +7,9 @@ import { fetchDataStart } from '../reducers/musicSlice';
 import { ClipLoader } from 'react-spinners';
 import Card from '../components/card';
 import { Link } from 'react-router-dom';
+import StarRating from '../components/starRating';
+import { API_BASE_URL } from '../api/baseApi';
+import axios from 'axios';
 
 interface CoverImage {
   public_id: string;
@@ -27,6 +30,8 @@ interface MusicListItem {
   album: string;
   genre: string;
   user: string;
+  rating: number;
+  ratingCount: number;
   createdAt: string;
   updatedAt: string;
   __v: number;
@@ -116,12 +121,47 @@ const Error = styled.div`
   font-size: 20em;
 `;
 
+const ArtistRatingContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const Rating = styled.div`
+  font-size: 1rem;
+  color: #FFD700; /* Set the color to gold or adjust as needed */
+  align-self: flex-center;
+  margin-left: 10px;
+  margin-top: 8px;
+`;
+
 const MusicDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
   const dispatch = useDispatch();
   const { data, loading, error } = useSelector((state: RootState) => state.music);
   const [musicDetail, setMusicDetail] = useState<MusicListItem | undefined>(undefined);
   const [audioSource, setAudioSource] = useState<string | undefined>(undefined);
+
+  const [submittedRating, setSubmittedRating] = useState<number | null>(null);
+
+  const handleStarClick = async (selectedRating: number) => {
+    try {
+      console.log("selectedRating", selectedRating);
+      
+      await axios.put(
+        `${API_BASE_URL}/music/rating/${storedUser._id}/${musicDetail?._id}`,
+        { rating: selectedRating },
+        { withCredentials: true }
+      );
+
+      dispatch(fetchDataStart());
+        setSubmittedRating(selectedRating);
+    } catch (error) {
+      console.error('Error updating rating:', error);
+    }
+  };
 
   useEffect(() => {
     if (!data) {
@@ -192,6 +232,10 @@ const MusicDetail: React.FC = () => {
           <Title>{musicDetail.title}</Title>
           <h2>Album: {musicDetail.album}</h2>
           <p>Artist: {musicDetail.artist}</p>
+          <ArtistRatingContainer>
+            <StarRating rating={submittedRating || musicDetail.rating || 0} onStarClick={handleStarClick} />
+            <Rating>{(submittedRating || musicDetail.rating || 0).toFixed(1)}</Rating>
+          </ArtistRatingContainer>
           <AudioPlayer key={audioSource} controls>
             <source src={audioSource} type="audio/mp3" />
             Your browser does not support the audio element.
@@ -210,6 +254,7 @@ const MusicDetail: React.FC = () => {
             imageUrl={music.coverImg.url}
             title={music.title}
             artist={music.artist}
+            rating={music.rating}
           />
         ))}
       </CardsContainer>
