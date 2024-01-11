@@ -9,7 +9,8 @@ import {
     getAllMusic, 
     getClientMusic,
     getAllMusicWithStats,
-    getAllClientMusicWithStats
+    getAllClientMusicWithStats,
+    updateRating
 } from '../controllers/music.controller.js';
 
 import { verifyClient } from "../utils/verifyToken.js";
@@ -24,6 +25,8 @@ router.get('/clientwithstat/:userId', verifyClient, getAllClientMusicWithStats);
 
 // Create Music
 router.post('/:userId', verifyClient, createMusic);
+
+router.put('/rating/:userId/:musicId', updateRating);
 
 // Update Music
 router.put('/:userId/:musicId', verifyClient, updateMusic);

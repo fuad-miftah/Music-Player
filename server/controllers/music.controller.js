@@ -327,5 +327,52 @@ export const getAllClientMusicWithStats = async (req, res, next) => {
     }
 };
 
+// Update Rating for Music
+export const updateRating = async (req, res, next) => {
+    try {
+        const musicId = req.params.musicId;
+        const { rating: incomingRating } = req.body;
+        console.log('incomingRating', incomingRating);
+
+        const existingMusic = await Music.findById(musicId);
+
+        if (!existingMusic) {
+            return res.status(404).json(createError(404, 'Music not found.'));
+        }
+
+        // Calculate new average rating and update rating count
+        const currentRatingSum = existingMusic.rating * existingMusic.ratingCount;
+        const newRatingCount = existingMusic.ratingCount + 1;
+        const newAverageRating =
+            (currentRatingSum + incomingRating) / newRatingCount;
+
+        // Update music document with new rating and rating count
+        const updatedMusic = await Music.findByIdAndUpdate(
+            musicId,
+            {
+                $set: {
+                    rating: newAverageRating,
+                    ratingCount: newRatingCount,
+                },
+            },
+            { new: true }
+        );
+
+        res.status(200).json(
+            createSuccess('Rating updated successfully', {
+                music: updatedMusic,
+                newAverageRating,
+                newRatingCount,
+            })
+        );
+    } catch (error) {
+        console.error('Error during rating update:', error);
+        res.status(500).json(
+            createError(500, 'Internal server error during rating update.')
+        );
+    }
+};
+
+
 
 export default router;
