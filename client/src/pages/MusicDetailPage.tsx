@@ -50,6 +50,12 @@ const Container = styled.div`
   margin: 10px;
   width: calc(100vw - 350px);
   color: white;
+
+  @media (max-width: 1000px) {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
 `;
 
 const CoverImageElement = styled.img`
