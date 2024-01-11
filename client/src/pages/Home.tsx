@@ -25,6 +25,8 @@ interface MusicListItem {
   album: string;
   genre: string;
   user: string;
+  rating: number;
+  ratingCount: number;
   createdAt: string;
   updatedAt: string;
   __v: number;
@@ -99,10 +101,12 @@ const Home: React.FC = () => {
     return shuffled.slice(0, count);
   };
 
-  const recentMusic = data.musicList.slice(0, 5);
+  const recentMusic = data.musicList.slice(-5);
 
-  const remainingMusic = data.musicList.slice(5);
+  const remainingMusic = data.musicList.slice();
   const randomlyChosenMusic = getRandomElements(remainingMusic, 5);
+
+  
 
   return (
     <MainContainer>
@@ -119,6 +123,7 @@ const Home: React.FC = () => {
               imageUrl={item.coverImg.url}
               title={item.title}
               artist={item.artist}
+              rating={item.rating}
             />
           ))}
         </CardsContainer>
@@ -136,6 +141,7 @@ const Home: React.FC = () => {
               imageUrl={item.coverImg.url}
               title={item.title}
               artist={item.artist}
+              rating={item.rating}
             />
           ))}
         </CardsContainer>

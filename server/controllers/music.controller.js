@@ -126,15 +126,15 @@ export const deleteMusic = async (req, res, next) => {
             return res.status(404).json(createError(404, 'Music not found.'));
         }
 
-            await cloudinary.uploader.destroy(existingMusic.coverImg.public_id);
-            await cloudinary.uploader.destroy(existingMusic.audio.public_id, { resource_type: 'video' });
+        await cloudinary.uploader.destroy(existingMusic.coverImg.public_id);
+        await cloudinary.uploader.destroy(existingMusic.audio.public_id, { resource_type: 'video' });
 
-            await User.findByIdAndUpdate(userId, { $pull: { music: musicId } });
+        await User.findByIdAndUpdate(userId, { $pull: { music: musicId } });
 
-            await Music.findByIdAndDelete(musicId);
+        await Music.findByIdAndDelete(musicId);
 
-            res.status(204).end();
-        
+        res.status(204).end();
+
     } catch (error) {
         console.error('Error during music deletion:', error);
         res.status(500).json(createError(500, 'Internal server error during music deletion.'));
@@ -290,7 +290,7 @@ export const getAllClientMusicWithStats = async (req, res, next) => {
                     },
                 },
             ]);
-            
+
             // Get songs in each album for the client's music
             const albumStats = await Music.aggregate([
                 {

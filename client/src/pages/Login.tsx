@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { loginStart } from '../reducers/authSlice';
 
 import styled from '@emotion/styled';
+import { RootState } from '../reducers/rootReducer';
 
 const LoginPageContainer = styled.div`
   display: flex;
@@ -41,13 +42,20 @@ const FormInput = styled.input`
 
 const FormButton = styled.button<{ loading?: boolean }>`
   width: 100%;
-  padding: 14px; /* Larger padding */
-  background-color: #05386B;
+  padding: 14px;
+  background-color: ${(props) => (props.loading ? '#666' : '#05386B')}; /* Change color when loading */
   color: #fff;
   border: none;
   border-radius: 4px;
   cursor: ${(props) => (props.loading ? 'not-allowed' : 'pointer')};
-  font-size: 1.2em; /* Larger font size */
+  font-size: 1.2em;
+
+  /* Add a transition effect for a smoother color change */
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: ${(props) => (props.loading ? '#666' : '#035075')}; /* Change hover color when loading */
+  }
 `;
 
 const ErrorMessage = styled.div`
@@ -71,19 +79,35 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    // Use useEffect to handle navigation based on the authentication status
+    if (isAuthenticated) {
+      navigate('/');
+    }
+  }, [isAuthenticated, navigate]);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
+  
     try {
-      dispatch(loginStart({ username, password }));
-      navigate('/');
+      await dispatch(loginStart({ username, password }));
+      console.log("check end");
+      
+      // Check authentication status in the Redux store
+      if (isAuthenticated) {
+        navigate('/');
+      } else {
+        // Handle authentication failure (show error message, etc.)
+        setError('Invalid username or password. Please try again.');
+      }
     } catch (err) {
-      setError('Invalid username or password. Please try again.');
+      setError('Error occurred. Please try again.'); // Handle other errors
     } finally {
       setLoading(false);
     }

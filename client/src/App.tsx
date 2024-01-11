@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect} from 'react';
 import { BrowserRouter, Routes, Route, Outlet, Navigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Sidebar from './components/sidebar';
@@ -38,6 +38,7 @@ const RootContainer = styled.div`
   background-color: #5CDB95;
   color: white;
 `;
+
 
 const MainContent = styled.div`
   margin-left: 250px;

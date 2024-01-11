@@ -53,7 +53,7 @@ const Rating = styled.div`
   color: #FFD700; /* Set the color to gold or adjust as needed */
 `;
 
-const Card: React.FC<CardProps> = ({ id, imageUrl, title, artist }) => (
+const Card: React.FC<CardProps> = ({ id, imageUrl, title, artist, rating }) => (
   <CardContainer to={`/music/${id}`}>
     <CardImage src={imageUrl} alt="Album Art" />
     <CardContent>

@@ -119,6 +119,7 @@ const Sidebar = () => {
   const userName = storedUser?.username || '';
   const userRole = storedUser?.role || '';
 
+
   const handleLogout = () => {
     dispatch(logout());
   };

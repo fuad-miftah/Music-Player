@@ -2,6 +2,7 @@ import { PayloadAction } from '@reduxjs/toolkit';
 import { takeEvery, call, put } from 'redux-saga/effects';
 import axios from 'axios';
 import { loginStart, loginSuccess, loginFailure, logout, verifyUserStart, verifyUserSuccess, verifyUserFailure } from './authSlice';
+import { API_BASE_URL } from '../api/baseApi';
 
 
 interface YourLoginPayloadType {
@@ -16,6 +17,7 @@ interface UserDetails {
   username: string;
   email: string;
   phone: string;
+  role: string;
   music: string[];
   createdAt: string;
   updatedAt: string;
@@ -42,7 +44,9 @@ interface CustomError {
 
 function* loginSaga(action: PayloadAction<YourLoginPayloadType>): Generator<any, void, LoginResponseData> {
   try {
-    const response: LoginResponseData = yield call(axios.post, 'https://music-player-s6gw.onrender.com/api/auth/login', action.payload);
+    console.log('Saga is running...');
+    const response = yield call(axios.post, `${API_BASE_URL}/auth/login`, action.payload);
+    console.log('Saga completed successfully:', response);
     yield put(loginSuccess(response.data));
 
     const { access_token } = response.data.data;
@@ -62,7 +66,7 @@ function isCustomError(obj: any): obj is CustomError {
 
 function* logoutSaga() {
   try {
-    yield call(axios.post, 'https://music-player-s6gw.onrender.com/api/auth/logout', { withCredentials: true });
+    yield call(axios.post, `${API_BASE_URL}/auth/logout`, { withCredentials: true });
     yield put(logout());
 
     document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
@@ -75,9 +79,9 @@ function* logoutSaga() {
   }
 }
 
-function* verifyUserSaga(action) {
+function* verifyUserSaga(action: PayloadAction<{ _id: string }>): Generator<any, void, any> {
   try {
-    const response = yield call(axios.get, `https://music-player-s6gw.onrender.com/api/auth/user/${action.payload._id}`, {
+    const response = yield call(axios.get, `${API_BASE_URL}/auth/user/${action.payload._id}`, {
       withCredentials: true,
     });
 

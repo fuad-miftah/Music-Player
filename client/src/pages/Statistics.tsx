@@ -73,6 +73,8 @@ const Error = styled.div`
 const Statistics: React.FC = () => {
 
   const musicData = useSelector((state: RootState) => state.music.data);
+  console.log("musicData", musicData);
+  
   
 
   if (!musicData) {
@@ -86,6 +88,8 @@ const Statistics: React.FC = () => {
     ).length,
   }));
 
+  console.log("timeBasedData", timeBasedData);
+  
   return (
     <PageContainer>
       <StyledHeader>Music Statistics</StyledHeader>
@@ -133,7 +137,7 @@ const Statistics: React.FC = () => {
               outerRadius={80}
               label
             >
-              {musicData.artistStats.map((entry, index) => (
+              {musicData.artistStats.map((_, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
@@ -156,7 +160,7 @@ const Statistics: React.FC = () => {
               outerRadius={80}
               label
             >
-              {musicData.albumStats.map((entry, index) => (
+              {musicData.albumStats.map((_, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
