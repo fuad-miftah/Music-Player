@@ -3,6 +3,8 @@ import axios from 'axios';
 import Modal from 'react-modal';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { useDispatch } from 'react-redux';
+import { updateMusicStart } from '../reducers/musicSlice';
 
 interface UpdateModalProps {
   isOpen: boolean;
@@ -28,12 +30,12 @@ const ModalContainer = styled.div`
   padding: 20px;
   border-radius: 8px;
   background-color: #1e1e1e; /* Black background */
-  color: #fff; /* White text */
+  color: #61dafb; /* White text */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 
   h2 {
     margin-bottom: 16px;
-    color: #4CAF50; /* Green title color */
+    color: #61dafb; /* Green title color */
   }
 `;
 
@@ -53,9 +55,9 @@ const Input = styled.input`
   box-sizing: border-box;
 `;
 
-const Button = styled.button`
-  background-color: #4CAF50;
-  color: white;
+const Button = styled.button<{ loading?: boolean }>`
+  background-color: #61dafb;
+  color: black;
   padding: 12px;
   border: none;
   border-radius: 4px;
@@ -66,6 +68,7 @@ const Button = styled.button`
 `;
 
 const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onRequestClose, musicId }) => {
+  const dispatch = useDispatch();
   const { id } = useParams();
   const navigate = useNavigate();
   const [updatedMusicData, setUpdatedMusicData] = useState<Partial<MusicData>>({
@@ -82,7 +85,7 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onRequestClose, music
     if (musicId) {
       const fetchMusicData = async () => {
         try {
-          const response = await axios.get(`http://localhost:5555/api/music/${id}/${musicId}`, { withCredentials: true });
+          const response = await axios.get(`https://music-player-s6gw.onrender.com/api/music/single/${musicId}`, { withCredentials: true });
           const musicData = response.data.data;
           setUpdatedMusicData({
             title: musicData.title,
@@ -108,16 +111,15 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onRequestClose, music
         formData.append('artist', updatedMusicData.artist || '');
         formData.append('album', updatedMusicData.album || '');
         formData.append('genre', updatedMusicData.genre || '');
-        formData.append('coverImage', updatedMusicData.imageFile || '');
+        formData.append('imageFile', updatedMusicData.imageFile || '');
         formData.append('audioFile', updatedMusicData.audioFile || '');
-
-        await axios.put(
-          `http://localhost:5555/api/music/${id}/${musicId}`,
-          formData,
-          { withCredentials: true }
-        );
-        onRequestClose(); // Close the modal after a successful update
-        navigate(`/mymusic/${id}`); // Navigate to the MyMusic page
+        if(id){
+          console.log("formData",formData);
+          
+        dispatch(updateMusicStart({ id, musicId, formData }));
+        onRequestClose();
+        navigate(`/mymusic/${id}`);
+        }
       }
     } catch (error) {
       console.error('Error updating music data:', error);
@@ -152,13 +154,13 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen, onRequestClose, music
       ariaHideApp={false}
       style={{
         overlay: {
-          backgroundColor: 'rgba(0, 0, 0, 0.5)', // semi-transparent black background
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
         },
         content: {
-          margin: '17.7px auto', // center the modal
-          padding: 0, // remove default padding
-          border: 'none', // remove default border
-          maxWidth: '430px', // set the maximum width of the modal
+          margin: '17.7px auto',
+          padding: 0,
+          border: 'none',
+          maxWidth: '430px',
         },
       }}
     >

@@ -1,15 +1,44 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { RootState } from '../reducers/rootReducer';
-import { fetchDataStart } from '../reducers/musicSlice';
 import Card from "../components/card";
 import styled from "@emotion/styled"
 import { Link } from 'react-router-dom';
+import { ClipLoader } from 'react-spinners';
+
+interface CoverImage {
+  public_id: string;
+  url: string;
+}
+
+interface Audio {
+  public_id: string;
+  url: string;
+}
+
+interface MusicListItem {
+  coverImg: CoverImage;
+  audio: Audio;
+  _id: string;
+  title: string;
+  artist: string;
+  album: string;
+  genre: string;
+  user: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+const MainContainer = styled.div`
+  padding-bottom: 20px;
+`;
 
 const HomeContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-bottom: 20px;
 `;
 
 const Header = styled.div`
@@ -17,11 +46,10 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: baseline;
   width: 100%;
-  
 `;
 
 const Title = styled.h1`
-  flex-grow: 1;
+font-size: 2.5rem;
   color: white;
 `;
 
@@ -29,6 +57,7 @@ const ShowAllLink = styled(Link)`
   color: white;
   text-decoration: none;
   cursor: pointer;
+  font-size: 1.2rem;
 `;
 
 const CardsContainer = styled.div`
@@ -39,36 +68,51 @@ const CardsContainer = styled.div`
   gap: 20px; /* Added gap between the cards */
 `;
 
+const Error = styled.div`
+  color: #05386B; 
+  padding: 30px;
+  margin: 20px 0; 
+  font-size: 20em;
+`;
+
 const Home: React.FC = () => {
-  const dispatch = useDispatch();
   const { data, loading, error } = useSelector((state: RootState) => state.music);
 
-  useEffect(() => {
-    dispatch(fetchDataStart());
-  }, [dispatch]);
-
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <ClipLoader color="#05386B" loading={loading} size={150} />
+      </div>
+    );
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <Error>Error</Error>;
   }
 
   if (!data) {
-    return <div>No data available</div>;
+    return <Error>No data available</Error>;
   }
 
+  const getRandomElements = (array: MusicListItem[], count: number) => {
+    const shuffled = array.sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
+  };
+
+  const recentMusic = data.musicList.slice(0, 5);
+
+  const remainingMusic = data.musicList.slice(5);
+  const randomlyChosenMusic = getRandomElements(remainingMusic, 5);
 
   return (
-    <div>
+    <MainContainer>
       <HomeContainer>
         <Header>
           <Title>Recent Music</Title>
-          <ShowAllLink to="/all-recent-music">Show All</ShowAllLink>
+          <ShowAllLink to="/music">Show All</ShowAllLink>
         </Header>
         <CardsContainer>
-          {data.musicList.slice(0, 5).map((item) => (
+          {recentMusic.map((item) => (
             <Card
               key={item._id}
               id={String(item._id)}
@@ -81,11 +125,11 @@ const Home: React.FC = () => {
       </HomeContainer>
       <HomeContainer>
         <Header>
-          <Title>Recent Music</Title>
-          <ShowAllLink to="/all-recent-music">Show All</ShowAllLink>
+          <Title>Randomly Chosen Music</Title>
+          <ShowAllLink to="/music">Show All</ShowAllLink>
         </Header>
         <CardsContainer>
-          {data.musicList.slice(0, 5).map((item) => (
+          {randomlyChosenMusic.map((item) => (
             <Card
               key={item._id}
               id={String(item._id)}
@@ -96,10 +140,8 @@ const Home: React.FC = () => {
           ))}
         </CardsContainer>
       </HomeContainer>
-    </div>
+    </MainContainer>
   );
 };
 
 export default Home;
-
-

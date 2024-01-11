@@ -1,10 +1,38 @@
-
 import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import UpdateModal from '../components/updateModal';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import { useDispatch } from 'react-redux';
+import { deleteMusicStart } from '../reducers/musicSlice';
+
+interface Music {
+  _id: string;
+  coverImg: {
+    public_id: string;
+    url: string;
+  };
+  audio: {
+    public_id: string;
+    url: string;
+  };
+  title: string;
+  artist: string;
+  album: string;
+  genre: string;
+  user: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+const Header = styled.h1`
+font-size: 2.5rem;
+color: white;
+align-self: start;
+padding-left: 20px;
+`;
 
 const Container = styled.div`
   color: white;
@@ -15,7 +43,7 @@ const Container = styled.div`
 `;
 
 const MusicCard = styled.div`
-  background-color: #000;
+  background-color: #05386B;
   color: #fff;
   border-radius: 10px;
   overflow: hidden;
@@ -43,7 +71,7 @@ const Title = styled.h3`
 
 const ArtistName = styled.p`
   font-size: 1rem;
-  opacity: 0.8;
+  color: #EDF5E1;
 `;
 
 const ButtonContainer = styled.div`
@@ -54,10 +82,12 @@ const ButtonContainer = styled.div`
 
 const EditButton = styled(FaEdit)`
   cursor: pointer;
+  color: #5CDB95;
 `;
 
 const DeleteButton = styled(FaTrash)`
   cursor: pointer;
+  color: #5CDB95;
 `;
 
 const PaginationContainer = styled.div`
@@ -70,20 +100,28 @@ const PageNumber = styled.span<{ isActive: boolean }>`
   padding: 8px;
   margin: 0 5px;
   cursor: pointer;
-  color: ${({ isActive }) => (isActive ? 'white' : 'black')};
-  background-color: ${({ isActive }) => (isActive ? 'blue' : 'transparent')};
+  color: ${({ isActive }) => (isActive ? '#EDF5E1' : 'white')};
+  background-color: ${({ isActive }) => (isActive ? '#05386B' : 'transparent')};
   border-radius: 4px;
   transition: background-color 0.3s, color 0.3s;
 
   &:hover {
-    background-color: ${({ isActive }) => (isActive ? 'blue' : '#ddd')};
+    background-color: ${({ isActive }) => (isActive ? '#8EE4AF' : '#379683')};
     color: white;
   }
 `;
 
+const Error = styled.div`
+  color: #05386B; 
+  padding: 30px;
+  margin: 20px 0; 
+  font-size: 20em;
+`;
+
 const MyMusic: React.FC = () => {
+  const dispatch = useDispatch();
   const { id } = useParams<{ id: string }>();
-  const [musicList, setMusicList] = useState([] as any[]);
+  const [musicList, setMusicList] = useState([] as Music[]);
   const [updateModalIsOpen, setUpdateModalIsOpen] = useState(false);
   const [selectedMusicId, setSelectedMusicId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -92,6 +130,7 @@ const MyMusic: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`http://localhost:5555/api/music/user/${id}`, { withCredentials: true });
+        
         setMusicList(response.data.data);
       } catch (error) {
         console.error('Error fetching music data:', error);
@@ -104,9 +143,17 @@ const MyMusic: React.FC = () => {
   const openUpdateModal = (musicId: string) => {
     setUpdateModalIsOpen(true);
     setSelectedMusicId(musicId);
+
   };
 
   const closeUpdateModal = () => {
+    axios.get(`http://localhost:5555/api/music/user/${id}`, { withCredentials: true })
+    .then(response => {
+      setMusicList(response.data.data);
+    })
+    .catch(error => {
+      console.error('Error fetching updated music data:', error);
+    });
     setUpdateModalIsOpen(false);
     setSelectedMusicId(null);
   };
@@ -124,20 +171,37 @@ const MyMusic: React.FC = () => {
 
   const handleDelete = async (musicId: string) => {
     const shouldDelete = window.confirm('Are you sure you want to delete?');
-
+  
     if (shouldDelete) {
       try {
-        await axios.delete(`http://localhost:5555/api/music/${id}/${musicId}`, { withCredentials: true });
-        setMusicList((prevList) => prevList.filter((m) => m._id !== musicId));
+
+        if(id){
+        await new Promise<void>((resolve) => {
+          dispatch(deleteMusicStart({ id, musicId }));
+          resolve();
+        });
+        
+        await new Promise(resolve => setTimeout(resolve, 4000));
+        
+        const response = await axios.get(`https://music-player-s6gw.onrender.com/api/music/user/${id}`, {
+          withCredentials: true
+        });
+    
+        setMusicList(response.data.data);
+
+      }
       } catch (error) {
         console.error('Error deleting music:', error);
       }
     }
   };
 
+  if(musicList.length === 0){
+    return <Error>No Music</Error>;
+  }
   return (
     <Container>
-      <h1>My Music</h1>
+      <Header>My Music</Header>
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
         {currentCards.map((music) => (
           <MusicCard key={music._id}>

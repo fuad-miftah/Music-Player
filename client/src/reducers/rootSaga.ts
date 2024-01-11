@@ -1,13 +1,11 @@
-// rootSaga.ts
-
 import { all } from 'redux-saga/effects';
-import { watchFetchData } from './musicSaga';
-import { watchLogin } from './authSaga';
+import { watchMusic } from './musicSaga';
+import { watchLogin, watchVerifyUser } from './authSaga';
 
 export function* rootSaga() {
   yield all([
-    watchFetchData(),
+    watchMusic(),
     watchLogin(),
-    // Add other sagas here if needed
+    watchVerifyUser(),
   ]);
 }

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import Sidebar from './components/sidebar';
 import MusicPage from './pages/Music';
 import MusicDetailPage from './pages/MusicDetailPage';
@@ -12,6 +13,9 @@ import NewMusic from './pages/NewMusic';
 import MyStat from './pages/MyStat';
 import MyMusic from './pages/MyMusic';
 import RegistrationPage from './pages/Register';
+import { fetchDataStart } from './reducers/musicSlice';
+import { verifyUserStart } from './reducers/authSlice';
+import axios from 'axios';
 
 const globalStyles = css`
   /* Add your global styles here */
@@ -19,7 +23,7 @@ const globalStyles = css`
     margin: 0;
     padding: 0;
     font-family: 'Arial', sans-serif;
-    background-color: #1E1E1E;
+    background-color: #5CDB95;
     height: 100%;
   }
 `;
@@ -27,7 +31,7 @@ const globalStyles = css`
 const RootContainer = styled.div`
   display: flex;
   height: 100vh;
-  background-color: #1E1E1E;
+  background-color: #5CDB95;
 `;
 
 const MainContent = styled.div`
@@ -45,6 +49,25 @@ const SidebarLayout = () => (
 );
 
 const App: React.FC = () => {
+  axios.defaults.withCredentials = true;
+  const dispatch = useDispatch();
+
+  const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
+  const _id: string = storedUser?._id;
+
+  
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
+    if (storedUser) {
+      
+      dispatch(verifyUserStart({ _id}));
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchDataStart());
+  }, [dispatch]);
+
   return (
     <BrowserRouter>
       <RootContainer>

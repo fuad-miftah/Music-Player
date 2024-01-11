@@ -10,23 +10,23 @@ const LoginPageContainer = styled.div`
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #1e1e1e; /* Dark background for the form */
+  padding: 0;
+
 `;
 
 const LoginForm = styled.form`
   width: 400px;
   padding: 20px;
-  border: 1px solid #ccc;
+  border: 1px solid #379683;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  background-color: #1e1e1e; /* Dark background for the form */
+  box-shadow: 0 0 10px #8EE4AF;
 `;
 
 const FormLabel = styled.label`
   display: block;
   margin-bottom: 8px;
   font-size: 1.5em; /* Larger font size */
-  color: #fff; /* White label text */
+  color: #05386B; /* White label text */
 `;
 
 const FormInput = styled.input`
@@ -34,15 +34,15 @@ const FormInput = styled.input`
   padding: 14px; /* Larger padding */
   margin-bottom: 16px;
   font-size: 1.2em; /* Larger font size */
-  border: 1px solid #ccc;
+  border: 1px solid #05386B;
   border-radius: 4px;
   box-sizing: border-box;
 `;
 
-const FormButton = styled.button`
+const FormButton = styled.button<{ loading?: boolean }>`
   width: 100%;
   padding: 14px; /* Larger padding */
-  background-color: #007bff;
+  background-color: #05386B;
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -62,6 +62,10 @@ const RegisterLink = styled.div`
   color: #fff; /* White text */
 `;
 
+const RegisterHere = styled.span`
+  color: #05386B;
+  `;
+
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -77,7 +81,6 @@ const LoginPage: React.FC = () => {
 
     try {
       dispatch(loginStart({ username, password }));
-      // If login was successful, navigate to the home page
       navigate('/');
     } catch (err) {
       setError('Invalid username or password. Please try again.');
@@ -112,7 +115,7 @@ const LoginPage: React.FC = () => {
         {error && <ErrorMessage>{error}</ErrorMessage>}
 
         <RegisterLink>
-          Don't have an account? <Link to="/register">Register here</Link>
+          Don't have an account? <Link to="/register"><RegisterHere>Register here</RegisterHere></Link>
         </RegisterLink>
       </LoginForm>
     </LoginPageContainer>

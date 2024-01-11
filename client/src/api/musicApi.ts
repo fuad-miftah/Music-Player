@@ -1,6 +1,11 @@
-// api/musicApi.ts
-import axios from 'axios';
+import axios from "axios";
 
-const API_BASE_URL = 'http://localhost:5555/api'; // Replace with your actual API base URL
+const axiosInstance = axios.create({
+    withCredentials: true,
+});
 
-export const fetchMusicData = () => axios.get(`${API_BASE_URL}/music/allwithstat`);
+export default axiosInstance;
+
+//const API_BASE_URL = 'http://localhost:5555/api';
+
+

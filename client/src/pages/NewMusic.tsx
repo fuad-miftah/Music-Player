@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from '@emotion/styled';
+import { createMusicStart } from '../reducers/musicSlice';
+import { RootState } from '../reducers/rootReducer';
 
 const StyledForm = styled.form`
   display: flex;
@@ -9,13 +11,11 @@ const StyledForm = styled.form`
   max-width: 400px;
   margin: auto;
   padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #333;
+  background-color: transparent; /* Removed background color */
 `;
 
 const StyledLabel = styled.label`
-  color: white;
+  color: #05386B;
   margin-bottom: 8px;
   font-size: 1.2em;
 `;
@@ -23,14 +23,17 @@ const StyledLabel = styled.label`
 const StyledInput = styled.input`
   padding: 10px;
   margin-bottom: 16px;
-  border-radius: 4px;
+  border-radius: 8px; /* Rounded the input field */
   font-size: 1em;
   width: 100%;
   box-sizing: border-box;
+  background-color: white; /* Set a background color */
+  border: 1px solid #05386B; /* Add a border */
+  color: #05386B; /* Text color */
 `;
 
-const StyledButton = styled.button`
-  background-color: #4CAF50;
+const StyledButton = styled.button<{ loading?: boolean }>`
+  background-color: #05386B;
   color: white;
   padding: 12px;
   border: none;
@@ -39,26 +42,22 @@ const StyledButton = styled.button`
   font-size: 1.2em;
   display: flex;
   align-items: center;
+  justify-content: center;
 `;
 
-const Spinner = styled.div`
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  border-left: 4px solid #4CAF50;
-  border-radius: 50%;
-  width: 16px;
-  height: 16px;
-  animation: spin 0.7s linear infinite;
-  margin-right: 8px;
-`;
 
-const SuccessMessage = styled.div`
-  color: #4CAF50;
-  font-size: 1.2em;
+const ErrorMessage = styled.div`
+  color: #ff0000;
+  font-size: 1em;
   margin-top: 8px;
 `;
 
 const NewMusic = () => {
-  const { id } = useParams();
+  const dispatch = useDispatch();
+  const loading = useSelector((state: RootState) => state.music.loading);
+  const error = useSelector((state: RootState) => state.music.error);
+  const { id: userId } = useParams();
+
   const [musicData, setMusicData] = useState({
     title: '',
     artist: '',
@@ -67,10 +66,8 @@ const NewMusic = () => {
     imageFile: null,
     audioFile: null,
   });
-  const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setMusicData((prevData) => ({
       ...prevData,
@@ -78,9 +75,9 @@ const NewMusic = () => {
     }));
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, files } = e.target;
-    const file = files[0];
+    const file = files![0];
 
     setMusicData((prevData) => ({
       ...prevData,
@@ -88,32 +85,20 @@ const NewMusic = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    try {
-      setLoading(true);
-      const formData = new FormData();
-      formData.append('title', musicData.title);
-      formData.append('artist', musicData.artist);
-      formData.append('album', musicData.album);
-      formData.append('genre', musicData.genre);
-      formData.append('imageFile', musicData.imageFile);
-      formData.append('audioFile', musicData.audioFile);
-
-      await axios.post(`http://localhost:5555/api/music/${id}`, formData, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      setSuccessMessage('Music created successfully!');
-      clearForm();
-    } catch (error) {
-      console.error('Error creating music:', error.message);
-    } finally {
-      setLoading(false);
+    if (!loading) {
+      try {
+        if (userId) {
+          dispatch(createMusicStart({ musicData, userId }));
+          clearForm();
+        } else {
+          console.error('User ID is undefined.');
+        }
+      } catch (error) {
+        console.error('Error creating music:', error);
+      }
     }
   };
 
@@ -131,7 +116,7 @@ const NewMusic = () => {
   return (
     <StyledForm onSubmit={handleSubmit} encType="multipart/form-data">
       <StyledLabel>
-        Title:
+        Title
         <StyledInput
           type="text"
           name="title"
@@ -141,7 +126,7 @@ const NewMusic = () => {
         />
       </StyledLabel>
       <StyledLabel>
-        Artist:
+        Artist
         <StyledInput
           type="text"
           name="artist"
@@ -151,7 +136,7 @@ const NewMusic = () => {
         />
       </StyledLabel>
       <StyledLabel>
-        Album:
+        Album
         <StyledInput
           type="text"
           name="album"
@@ -161,7 +146,7 @@ const NewMusic = () => {
         />
       </StyledLabel>
       <StyledLabel>
-        Genre:
+        Genre
         <StyledInput
           type="text"
           name="genre"
@@ -171,7 +156,7 @@ const NewMusic = () => {
         />
       </StyledLabel>
       <StyledLabel>
-        Cover Image:
+        Cover Image
         <StyledInput
           type="file"
           name="imageFile"
@@ -180,7 +165,7 @@ const NewMusic = () => {
         />
       </StyledLabel>
       <StyledLabel>
-        Audio File:
+        Audio File
         <StyledInput
           type="file"
           name="audioFile"
@@ -188,11 +173,13 @@ const NewMusic = () => {
           placeholder="Choose audio file"
         />
       </StyledLabel>
+      
+      {error && <ErrorMessage>Error Try again</ErrorMessage>}
+      
       <StyledButton type="submit" loading={loading}>
-        {loading && <Spinner />}
+        {loading && "Creating ..."}
         {!loading && 'Create Music'}
       </StyledButton>
-      {successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
     </StyledForm>
   );
 };
